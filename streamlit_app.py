@@ -69,13 +69,13 @@ for keyword in keywords:
         # Append the JSON response to the list
         json_responses.append(data)
     else:
-        print(f"Failed to retrieve repositories for '{keyword}'. Status code: {response.status_code}")
+        st.write(f"Failed to retrieve repositories for '{keyword}'. Status code: {response.status_code}")
 
 # Combine DataFrames for each keyword into a single DataFrame
 combined_df = pd.concat(dfs, ignore_index=True)
 
 # Display the combined DataFrame
-print(combined_df)
+st.write(combined_df)
 
 # Save the JSON responses to a file
 with open('response.json', 'w', encoding='utf-8') as json_file:
