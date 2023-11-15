@@ -1,40 +1,49 @@
-import altair as alt
-import numpy as np
 import pandas as pd
-import streamlit as st
+import re
+from bs4 import BeautifulSoup
+import nltk
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
 
-"""
-# Welcome to Streamlit!
+# Load the dataset
+data = pd.read_csv("/content/training.1600000.processed.noemoticon.csv", encoding='ISO-8859-1', header=None)
+data.columns = ["sentiment", "id", "date", "flag", "user", "text"]
 
-Edit `/streamlit_app.py` to customize this app to your heart's desire :heart:.
-If you have any questions, checkout our [documentation](https://docs.streamlit.io) and [community
-forums](https://discuss.streamlit.io).
+def clean_text(tweet):
+    # Decoding HTML
+    tweet = BeautifulSoup(tweet, "lxml").get_text()
+    # Convert to lowercase
+    tweet = tweet.lower()
+    # Remove URLs
+    tweet = re.sub(r'http\S+', '', tweet)
+    # Remove mentions
+    tweet = re.sub(r'@\S+', '', tweet)
+    # Remove hashtags (just the # symbol)
+    tweet = re.sub(r'#', '', tweet)
+    # Remove punctuations
+    tweet = re.sub(r'[^\w\s]', '', tweet)
 
-In the meantime, below is an example of what you can do with just a few lines of code:
-"""
+    # Text of characters to exclude
+    exclude_text = "中英文敏感词语言检测中外手机电话归属地运营商查询名字推断性别手机号抽取身份证抽取邮箱抽取中日"
 
-num_points = st.slider("Number of points in spiral", 1, 10000, 1100)
-num_turns = st.slider("Number of turns in spiral", 1, 300, 31)
+    # Check if the tweet contains any character from exclude_text
+    if any(char in tweet for char in exclude_text):
+        return ''
 
-indices = np.linspace(0, 1, num_points)
-theta = 2 * np.pi * num_turns * indices
-radius = indices
+    # Tokenization
+    tokens = nltk.word_tokenize(tweet)
 
-x = radius * np.cos(theta)
-y = radius * np.sin(theta)
+    # Remove stopwords (optional based on performance)
+    stop_words = set(stopwords.words('english'))
+    tokens = [word for word in tokens if word not in stop_words]
 
-df = pd.DataFrame({
-    "x": x,
-    "y": y,
-    "idx": indices,
-    "rand": np.random.randn(num_points),
-})
+    # Lemmatization (optional based on performance)
+    # lemmatizer = WordNetLemmatizer()
+    # tokens = [lemmatizer.lemmatize(word) for word in tokens]
 
-st.altair_chart(alt.Chart(df, height=700, width=700)
-    .mark_point(filled=True)
-    .encode(
-        x=alt.X("x", axis=None),
-        y=alt.Y("y", axis=None),
-        color=alt.Color("idx", legend=None, scale=alt.Scale()),
-        size=alt.Size("rand", legend=None, scale=alt.Scale(range=[1, 150])),
-    ))
+    # Join tokens back into a string
+    cleaned_tweet = ' '.join(tokens)
+
+    return cleaned_tweet
+# Apply the cleaning function to the text column
+data["cleaned_text"] = data["text"].apply(clean_text)
