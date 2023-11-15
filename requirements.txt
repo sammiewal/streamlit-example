@@ -1,7 +1,7 @@
 nltk
 streamlit
 requests
-BeautifulSoup
+beautifulsoup4
 contractions
 punctuation
 wordcloud
