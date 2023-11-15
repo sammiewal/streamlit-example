@@ -14,9 +14,9 @@ from nltk.corpus import stopwords
 tokenizer = ToktokTokenizer()                                                                                   # stopword removal
 from nltk import word_tokenize
 import pandas as pd
-import numpy as np                                                                                              # general packages for data manipulation
+import numpy as np   
 
-# Your GitHub Personal Access Token
+# general packages for data manipulation
 TOKEN = st.secrets["GITHUB_KEY"]
 
 # Define the API endpoint
