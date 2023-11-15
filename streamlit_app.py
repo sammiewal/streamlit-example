@@ -92,7 +92,7 @@ nltk.download("punkt")
 # Define a function to filter out specific characters
 def filter_characters(text):
     # Define a list of characters to filter out
-    characters_to_filter = ["通", "义", "千", "问", "书", "生"]
+    characters_to_filter = ["中英文敏感词语言检测中外手机电话归属地运营商查询名字推断性别手机号抽取身份证抽取邮箱抽取中日"]
 
     # Replace the characters with an empty string
     filtered_text = ''.join([char for char in text if char not in characters_to_filter])
