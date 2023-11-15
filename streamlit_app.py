@@ -12,9 +12,11 @@ import spacy                                                                    
 from nltk.tokenize.toktok import ToktokTokenizer
 from nltk.corpus import stopwords
 tokenizer = ToktokTokenizer()                                                                                   # stopword removal
-from nltk import word_tokenize
 import pandas as pd
 import numpy as np   
+import nltk
+nltk.download('wordnet')
+
 
 # general packages for data manipulation
 TOKEN = st.secrets["GITHUB_KEY"]
