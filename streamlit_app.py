@@ -3,7 +3,7 @@ import os
 import requests
 import json
 import pandas as pd
-import nltk, re, pprint
+import nltk
 from urllib import request
 from bs4 import BeautifulSoup                                                                                   # needed for parsing HTML
 import contractions                                                                                             # contractions dictionary
