@@ -77,6 +77,55 @@ combined_df = pd.concat(dfs, ignore_index=True)
 # Display the combined DataFrame
 st.write(combined_df)
 
-# Save the JSON responses to a file
-with open('response.json', 'w', encoding='utf-8') as json_file:
-    json.dump(json_responses, json_file, ensure_ascii=False, indent=4)
+
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from nltk.stem import WordNetLemmatizer
+
+# Download NLTK stopwords data if not already downloaded
+nltk.download("stopwords")
+nltk.download("punkt")
+
+# Define a function to filter out specific characters
+def filter_characters(text):
+    # Define a list of characters to filter out
+    characters_to_filter = ["通", "义", "千", "问", "书", "生"]
+
+    # Replace the characters with an empty string
+    filtered_text = ''.join([char for char in text if char not in characters_to_filter])
+
+    return filtered_text
+
+# Apply character filtering to the "Description" column
+combined_df["Description"] = combined_df["Description"].apply(lambda x: filter_characters(str(x)))
+
+# Initialize the WordNet lemmatizer
+lemmatizer = WordNetLemmatizer()
+
+# Define a function to clean text with lemmatization
+def clean_text(text):
+    # Tokenize the text (split into words)
+    words = word_tokenize(text)
+
+    # Remove punctuation and convert to lowercase
+    cleaned_words = [word.lower() for word in words if word.isalnum()]
+
+    # Remove stopwords
+    stop_words = set(stopwords.words("english"))
+    cleaned_words = [word for word in cleaned_words if word not in stop_words]
+
+    # Lemmatize the words
+    lemmatized_words = [lemmatizer.lemmatize(word) for word in cleaned_words]
+
+    # Join the lemmatized words back into text
+    cleaned_text = " ".join(lemmatized_words)
+
+    return cleaned_text
+
+# Apply text cleaning with lemmatization to the "Description" column
+combined_df["Description"] = combined_df["Description"].apply(lambda x: clean_text(str(x)))
+
+# Example usage
+st.write(combined_df.head())
+combined_df.head()
