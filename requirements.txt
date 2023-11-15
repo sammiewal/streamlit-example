@@ -3,6 +3,5 @@ streamlit
 requests
 beautifulsoup4
 contractions
-punctuation
 wordcloud
 spacy
