@@ -17,7 +17,7 @@ import pandas as pd
 import numpy as np                                                                                              # general packages for data manipulation
 
 # Your GitHub Personal Access Token
-TOKEN = st.secrets["github_api"]
+TOKEN = st.secrets["GITHUB_KEY"]
 
 # Define the API endpoint
 endpoint = "https://api.github.com/search/repositories"
