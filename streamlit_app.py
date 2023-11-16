@@ -169,3 +169,44 @@ doc_sim_df.head()
 repository_list = combined_df['Repository Name'].values
 repository_list
 
+# extracted the index number
+repository_idx = np.where(repository_list == 'TensorFlow-Course')[0][0]
+repository_idx
+
+
+# extracting the similarity scores associated with the sample movie
+repository_similarities = doc_sim_df[repository_idx].values
+repository_similarities
+
+similar_repository_idxs = np.argsort(repository_similarities)[1:6]                                                 # save the movie index of the top 5 highest similarity scores
+similar_repository = repository_list[similar_repository_idxs]                                                         # pull out the movie names associated with those top 5 movie indices
+similar_repository
+
+# Add comments
+def repository_recommender(repository_name, repository=repository_list, doc_sims=doc_sim_df):
+
+    repository_idx = np.where(repository == repository_name)[0][0] # locate the index number of the user provided title
+
+    repository_similarities = doc_sims.iloc[repository_idx].values # create a list of similarity scores for that movie
+
+    similar_repository_idxs = np.argsort(repository_similarities)[1:6] # sort the similarity scores and pull out the top 5
+
+    similar_repository = repository[similar_repository_idxs] # match the index number to their movie titles
+
+    return print("Based on your interest in", repository_name,"I'd Recommend checking out:", similar_repository)
+
+repository_recommender('Machine-Learning-with-Python') # input movie
+
+def query_repository_recommender(search_query, repository=repository_list, tfidf_matrix=tfidf_matrix):
+    # Transform the search query into its vector form
+    query_vector = tv.transform([search_query])
+
+    cosine_similarities = cosine_similarity(query_vector, tfidf_matrix)
+
+    similar_repository_idxs = cosine_similarities[0].argsort()[-5:][::-1]
+
+    similar_repositories = repository[similar_repository_idxs]
+
+    return print("Based on your search query, I'd recommend checking out:", similar_repository)
+
+query_repository_recommender('chatgpt')
