@@ -5,3 +5,4 @@ beautifulsoup4
 contractions
 wordcloud
 spacy
+sklearn
