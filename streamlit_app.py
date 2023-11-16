@@ -15,6 +15,8 @@ tokenizer = ToktokTokenizer()                                                   
 import pandas as pd
 import numpy as np   
 import nltk
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity         
 nltk.download('wordnet')
 
 
@@ -128,6 +130,42 @@ def clean_text(text):
 # Apply text cleaning with lemmatization to the "Description" column
 combined_df["Description"] = combined_df["Description"].apply(lambda x: clean_text(str(x)))
 
-# Example usage
-st.write(combined_df.head())
-combined_df.head()
+stop_words = nltk.corpus.stopwords.words('english')
+
+# Feature engineering using TF-IDF
+tv = TfidfVectorizer(use_idf=True, min_df=4, max_df=0.8, ngram_range=(1,2), sublinear_tf=True)
+tv_train_features = tv.fit_transform(combined_df)
+tv_test_features = tv.transform(combined_df)
+
+# Displaying the shape of the feature matrices
+tv_train_features.shape, tv_test_features.shape
+vocabulary = np.array(tv.get_feature_names_out())
+
+
+# add comments
+def normalize_document(doc):
+    doc = re.sub(r'[^a-zA-Z0-9\s]', '', doc, re.I|re.A) # removing special characters
+    doc = doc.lower() # casefolding
+    doc = doc.strip() # stripping white spaces
+    tokens = nltk.word_tokenize(doc) # tokenizing to words
+    filtered_tokens = [token for token in tokens if token not in stop_words] # removing stopwords
+    doc = ' '.join(filtered_tokens) # pastings tokens back into a continuous string
+    return doc
+
+normalize_corpus = np.vectorize(normalize_document)
+
+
+norm_corpus = normalize_corpus(list(combined_df['cleaned_description'])) # add input
+
+                         # set parameters for tf-idf for unigrams and bigrams
+tfidf_matrix = tv.fit_transform(norm_corpus)                                      # extract tfidf features from norm_corpus
+tfidf_matrix.shape
+
+doc_sim = cosine_similarity(tfidf_matrix)    # compute document similarity by examining the cosine similairty b/w documents in matrix
+doc_sim_df = pd.DataFrame(doc_sim)                                                  # take doc_sim, convert to dataframe
+doc_sim_df.head()
+
+# saving all the unique movie titles to a list
+repository_list = combined_df['Repository Name'].values
+repository_list
+
