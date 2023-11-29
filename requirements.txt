@@ -6,4 +6,5 @@ contractions
 wordcloud
 spacy
 scikit-learn
-PIL
+Pillow
+
