@@ -162,8 +162,9 @@ new_stopwords_list =  stopwords.union(new_stopwords)
 
 print(new_stopwords_list)
 
+image_path = 'github.png'
 
-mask_image = Image.open('github.png')
+mask_image = Image.open(image_path)
 
 # Convert the image to 'L' mode which gives you grayscale
 mask_image_gray = mask_image.convert('L')
