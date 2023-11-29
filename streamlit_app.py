@@ -86,7 +86,10 @@ def clean_text(text):
 
     return " ".join(lemmatized_words)
 
-# Apply the cleaning function to your DataFrame
+# Load the data and make a copy
+combined_df = load_data(csv_url).copy()
+
+# Apply the cleaning function to the copy of your DataFrame
 combined_df["Description"] = combined_df["Description"].apply(clean_text)
 
 # Example usage
