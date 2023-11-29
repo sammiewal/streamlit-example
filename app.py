@@ -1,6 +1,6 @@
 import streamlit as st
 from main_page import app as main_page_app
-from analytics_page import app as analytics_page_app
+from analytics_page import app as text_exploration_app
 from settings_page import app as settings_page_app
 
 PAGES = {
