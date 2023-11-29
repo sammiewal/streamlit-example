@@ -162,7 +162,7 @@ print(new_stopwords_list)
 
 from PIL import Image
 
-mask_image = Image.open('/content/github.png')
+mask_image = Image.open('github.png')
 
 # Convert the image to 'L' mode which gives you grayscale
 mask_image_gray = mask_image.convert('L')
