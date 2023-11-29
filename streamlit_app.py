@@ -92,7 +92,4 @@ combined_df = load_data(csv_url).copy()
 # Apply the cleaning function to the copy of your DataFrame
 combined_df["Description"] = combined_df["Description"].apply(clean_text)
 
-combined_df = combined_df[['Repository Name', 'Repository URL', 'Description', 'Keyword', 'Stars']]
-combined_df['Description'] = combined_df['Keyword'].map(str) + ' ' + combined_df['Description'].map(str)
-
 st.write(combined_df['Description'])
