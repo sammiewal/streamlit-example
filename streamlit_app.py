@@ -58,6 +58,10 @@ def filter_characters(text):
 # Initialize the WordNet lemmatizer
 lemmatizer = WordNetLemmatizer()
 
+def remove_special_characters(text):
+    # This will replace any character not a letter, digit, space, or underscore with an empty string
+    return re.sub(r'[^a-zA-Z0-9 _]', '', text)
+    
 # Define a function to clean text with lemmatization
 def clean_text(text):
     # Handle non-string inputs
@@ -92,7 +96,9 @@ def clean_text(text):
 combined_df = load_data(csv_url).copy()
 
 # Apply the cleaning function to the copy of your DataFrame
+combined_df["Description"] = combined_df["Description"].apply(remove_special_characters)
 combined_df["Description"] = combined_df["Description"].apply(clean_text)
+
 
 combined_df = combined_df[['Repository Name', 'Repository URL', 'Description', 'Keyword', 'Stars']]
 combined_df['Description'] = combined_df['Keyword'].map(str) + ' ' + combined_df['Description'].map(str)
