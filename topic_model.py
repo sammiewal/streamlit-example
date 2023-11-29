@@ -39,8 +39,9 @@ def load_data(url):
 def app():
     st.title('Topic Modeling')
     st.write('This is the main page of the app.')
-    preprocessed_data = combined_df['Description']
     # URL of the raw CSV file
     csv_url = 'https://raw.githubusercontent.com/sammiewal/streamlit-example/master/combined_data.csv'
     # Load the data
     combined_df = load_data(csv_url)
+    preprocessed_data = combined_df['Description']
+
