@@ -39,6 +39,8 @@ nltk.download("punkt")
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 
+from PIL import Image
+
 @st.cache_data
 def load_data(url):
     data = pd.read_csv(url)
@@ -160,7 +162,6 @@ new_stopwords_list =  stopwords.union(new_stopwords)
 
 print(new_stopwords_list)
 
-from PIL import Image
 
 mask_image = Image.open('github.png')
 
@@ -171,11 +172,6 @@ mask_image_gray = mask_image.convert('L')
 mask_array = np.array(mask_image_gray)
 transformed_mask_image = np.where(mask_array == 255, 1, 0)
 
-
-import numpy as np
-from PIL import Image
-from wordcloud import WordCloud
-import matplotlib.pyplot as plt
 
 # Load the image file
 mask_image_color = Image.open(image_path)
