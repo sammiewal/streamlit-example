@@ -90,4 +90,4 @@ def clean_text(text):
 combined_df["Description"] = combined_df["Description"].apply(clean_text)
 
 # Example usage
-print(combined_df.head())
+st.write(combined_df)
