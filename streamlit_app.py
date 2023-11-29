@@ -148,16 +148,24 @@ combined_df['avg_word_length'] = combined_df['Description'].apply(lambda x: sum(
 st.dataframe(combined_df.head())
 
 
-
 # Concatenate all descriptions into a single string
 all_descriptions = " ".join(combined_df['Description'])
 
 # Generate a word cloud
 wordcloud = WordCloud(width=800, height=400).generate(all_descriptions)
+plt.figure(figsize = (8, 8), facecolor = None) 
+plt.imshow(wordcloud) 
+plt.axis("off") 
+plt.tight_layout(pad = 0) 
 
-# Display the word cloud
-plt.figure(figsize=(10, 5))
-plt.imshow(wordcloud, interpolation="bilinear")
-plt.axis("off")
-plt.show()
+# Save the plot as a file
+plt.savefig('wordcloud.png')
+plt.close()
 
+# Open the image and display it in Streamlit
+st.image('wordcloud.png')
+
+fig, ax = plt.subplots()
+ax.imshow(wordcloud, interpolation='bilinear')
+ax.axis("off")
+st.pyplot(fig)
