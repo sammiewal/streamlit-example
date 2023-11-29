@@ -15,7 +15,9 @@ from nltk.tokenize.toktok import ToktokTokenizer
 from nltk.corpus import stopwords as nltk_stopwords 
 tokenizer = ToktokTokenizer()                                                                                   # stopword removal
 import pandas as pd
-import numpy as np   
+import numpy as np 
+from sklearn.cluster import KMeans
+from collections import Counter
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity         
 nltk.download('wordnet')
