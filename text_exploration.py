@@ -258,7 +258,7 @@ display_topics(lda, vocabulary, no_top_words)
 
 def custom_tokenizer(text):
     tokens = nltk.word_tokenize(text)
-    english_stopwords = set(stopwords.words('english'))  # Convert to a set for faster lookup
+    english_stopwords = set(nltk_stopwords.words('english')) 
     tokens = [token for token in tokens if token not in english_stopwords]
     bigrams = ["_".join(tokens[i:i+2]) for i in range(len(tokens)-1)]
     return bigrams
