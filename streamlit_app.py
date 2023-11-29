@@ -14,75 +14,9 @@ from nltk.corpus import stopwords
 tokenizer = ToktokTokenizer()                                                                                   # stopword removal
 import pandas as pd
 import numpy as np   
-import nltk
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity         
 nltk.download('wordnet')
-
-
-# general packages for data manipulation
-TOKEN = st.secrets["GITHUB_KEY"]
-
-# Define the API endpoint
-endpoint = "https://api.github.com/search/repositories"
-
-# Keywords you want to search for
-keywords = ['api', 'tensorflow', 'machine learning', 'python', 'ajax' ,'cloud computing', 'twitter', 'chatgpt', 'pytorch', 'keras', 'ai', 'django', 'ruby', 'ohmyzsh', 'arduino', 'chrome', 'wordpress', 'vinta', 'development', 'twbs', 'bootstrap', 'cybersecurity', 'docker', 'public api', 'aws', 'ibm', 'bitcoin', 'microsoft', 'drupal', 'matplotlib', 'seaborn', 'freecodecamp', 'react', 'donnemartin', 'html5', 'android',  'typescript', 'kamranahmedse', 'azure', 'atom', 'mysql', 'database', 'algorithm', 'nextjs', 'sass', 'sindresorhus', 'css', 'config', 'nltk', 'spacy', 'java', 'nodejs', 'javascript', 'scikit learn', 'jwasham',  'ebookfoundation', 'jquery', 'angular']
-
-# Set up the headers
-headers = {
-    "Authorization": f"token {TOKEN}"
-}
-
-# Initialize an empty list to store DataFrames for each keyword
-dfs = []
-
-# Initialize an empty list to store the JSON response data
-json_responses = []
-
-for keyword in keywords:
-    # Define the query parameters for the current keyword and language filter
-    params = {
-        "q": f"{keyword}",  # Keyword and language filter
-        "sort": "stars",  # Sort by stars (you can change this to other criteria)
-        "order": "desc"   # Order by descending (you can change to "asc" for ascending)
-    }
-
-    # Send a GET request to the API endpoint
-    response = requests.get(endpoint, headers=headers, params=params)
-
-    # Check the response status code
-    if response.status_code == 200:
-        # Parse the JSON response
-        data = response.json()
-        repositories = data["items"]
-
-        # Create a DataFrame from the repository data
-        df = pd.DataFrame(repositories)
-
-        # Select and rename columns of interest
-        df = df[["name", "html_url", "description", "stargazers_count", "forks_count", "watchers_count"]]
-        df.columns = ["Repository Name", "Repository URL", "Description", "Stars", "Forks", "Watchers"]
-
-        # Add a new column for the keyword
-        df["Keyword"] = keyword
-
-        # Append the DataFrame to the list
-        dfs.append(df)
-
-        # Append the JSON response to the list
-        json_responses.append(data)
-    else:
-        st.write(f"Failed to retrieve repositories for '{keyword}'. Status code: {response.status_code}")
-
-# Combine DataFrames for each keyword into a single DataFrame
-combined_df = pd.concat(dfs, ignore_index=True)
-
-# Display the combined DataFrame
-st.write(combined_df)
-
-
-import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
@@ -91,122 +25,57 @@ from nltk.stem import WordNetLemmatizer
 nltk.download("stopwords")
 nltk.download("punkt")
 
+import re
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from nltk.stem import WordNetLemmatizer
+
+# Download NLTK stopwords and punkt data if not already downloaded
+nltk.download("stopwords")
+nltk.download("punkt")
+
+
+combined_df = pd.read_csv('combined_data.csv')
+
 # Define a function to filter out specific characters
 def filter_characters(text):
-    # Define a list of characters to filter out
-    characters_to_filter = ["中英文敏感词语言检测中外手机电话归属地运营商查询名字推断性别手机号抽取身份证抽取邮箱抽取中日"]
-
-    # Replace the characters with an empty string
-    filtered_text = ''.join([char for char in text if char not in characters_to_filter])
-
-    return filtered_text
-
-# Apply character filtering to the "Description" column
-combined_df["Description"] = combined_df["Description"].apply(lambda x: filter_characters(str(x)))
+    characters_to_filter = ["通", "义", "千", "问", "书", "生"]
+    return ''.join([char for char in text if char not in characters_to_filter])
 
 # Initialize the WordNet lemmatizer
 lemmatizer = WordNetLemmatizer()
 
 # Define a function to clean text with lemmatization
 def clean_text(text):
-    # Tokenize the text (split into words)
-    words = word_tokenize(text)
+    exclude_text = "中英文敏感词语言检测中外手机电话归属地运营商查询名字推断性别手机号抽取身份证抽取邮箱抽取中日"
 
-    # Remove punctuation and convert to lowercase
+    # Check if the tweet contains any character from exclude_text
+    if any(char in text for char in exclude_text):
+        return ''
+    text = filter_characters(text)  # Apply character filtering
+
+    # Remove URLs, mentions, hashtags, and non-alphanumeric characters in one step
+    text = re.sub(r'http\S+|@\S+|#|[^\w\s]', '', text)
+
+    # Tokenize, lowercase, and remove non-alphanumeric words
+    words = word_tokenize(text)
     cleaned_words = [word.lower() for word in words if word.isalnum()]
 
     # Remove stopwords
     stop_words = set(stopwords.words("english"))
     cleaned_words = [word for word in cleaned_words if word not in stop_words]
 
-    # Lemmatize the words
+    # Lemmatize
     lemmatized_words = [lemmatizer.lemmatize(word) for word in cleaned_words]
 
-    # Join the lemmatized words back into text
-    cleaned_text = " ".join(lemmatized_words)
+    # Special handling for specific cases (e.g., "pdf")
+    lemmatized_words = ['pdf' if word.startswith('pdf') else word for word in lemmatized_words]
 
-    return cleaned_text
+    return " ".join(lemmatized_words)
 
-# Apply text cleaning with lemmatization to the "Description" column
-combined_df["Description"] = combined_df["Description"].apply(lambda x: clean_text(str(x)))
+# Apply the cleaning function to your DataFrame
+combined_df["Description"] = combined_df["Description"].apply(clean_text)
 
-stop_words = nltk.corpus.stopwords.words('english')
-
-# Feature engineering using TF-IDF
-tv = TfidfVectorizer(use_idf=True, min_df=4, max_df=0.8, ngram_range=(1,2), sublinear_tf=True)
-tv_train_features = tv.fit_transform(combined_df)
-tv_test_features = tv.transform(combined_df)
-
-# Displaying the shape of the feature matrices
-tv_train_features.shape, tv_test_features.shape
-vocabulary = np.array(tv.get_feature_names_out())
-
-
-# add comments
-def normalize_document(doc):
-    doc = re.sub(r'[^a-zA-Z0-9\s]', '', doc, re.I|re.A) # removing special characters
-    doc = doc.lower() # casefolding
-    doc = doc.strip() # stripping white spaces
-    tokens = nltk.word_tokenize(doc) # tokenizing to words
-    filtered_tokens = [token for token in tokens if token not in stop_words] # removing stopwords
-    doc = ' '.join(filtered_tokens) # pastings tokens back into a continuous string
-    return doc
-
-normalize_corpus = np.vectorize(normalize_document)
-
-
-norm_corpus = normalize_corpus(list(combined_df['cleaned_description'])) # add input
-
-                         # set parameters for tf-idf for unigrams and bigrams
-tfidf_matrix = tv.fit_transform(norm_corpus)                                      # extract tfidf features from norm_corpus
-tfidf_matrix.shape
-
-doc_sim = cosine_similarity(tfidf_matrix)    # compute document similarity by examining the cosine similairty b/w documents in matrix
-doc_sim_df = pd.DataFrame(doc_sim)                                                  # take doc_sim, convert to dataframe
-doc_sim_df.head()
-
-# saving all the unique movie titles to a list
-repository_list = combined_df['Repository Name'].values
-repository_list
-
-# extracted the index number
-repository_idx = np.where(repository_list == 'TensorFlow-Course')[0][0]
-repository_idx
-
-
-# extracting the similarity scores associated with the sample movie
-repository_similarities = doc_sim_df[repository_idx].values
-repository_similarities
-
-similar_repository_idxs = np.argsort(repository_similarities)[1:6]                                                 # save the movie index of the top 5 highest similarity scores
-similar_repository = repository_list[similar_repository_idxs]                                                         # pull out the movie names associated with those top 5 movie indices
-similar_repository
-
-# Add comments
-def repository_recommender(repository_name, repository=repository_list, doc_sims=doc_sim_df):
-
-    repository_idx = np.where(repository == repository_name)[0][0] # locate the index number of the user provided title
-
-    repository_similarities = doc_sims.iloc[repository_idx].values # create a list of similarity scores for that movie
-
-    similar_repository_idxs = np.argsort(repository_similarities)[1:6] # sort the similarity scores and pull out the top 5
-
-    similar_repository = repository[similar_repository_idxs] # match the index number to their movie titles
-
-    return print("Based on your interest in", repository_name,"I'd Recommend checking out:", similar_repository)
-
-repository_recommender('Machine-Learning-with-Python') # input movie
-
-def query_repository_recommender(search_query, repository=repository_list, tfidf_matrix=tfidf_matrix):
-    # Transform the search query into its vector form
-    query_vector = tv.transform([search_query])
-
-    cosine_similarities = cosine_similarity(query_vector, tfidf_matrix)
-
-    similar_repository_idxs = cosine_similarities[0].argsort()[-5:][::-1]
-
-    similar_repositories = repository[similar_repository_idxs]
-
-    return print("Based on your search query, I'd recommend checking out:", similar_repository)
-
-query_repository_recommender('chatgpt')
+# Example usage
+print(combined_df.head())
