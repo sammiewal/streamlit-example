@@ -309,3 +309,87 @@ for i, ax in enumerate(axes):
 
 plt.tight_layout()
 st.pyplot(plt)
+
+doc_topic_matrix = lda.transform(dtm)
+
+df_doc_topic = pd.DataFrame(doc_topic_matrix, columns=[f'Topic {i}' for i in range(lda.n_components)])
+df_doc_topic
+
+stop_words = nltk.corpus.stopwords.words('english')
+
+def normalize_document(doc):
+    doc = re.sub(r'[^a-zA-Z0-9\s]', '', doc, re.I|re.A)                                       # lower case and remove special characters\whitespaces
+    doc = doc.lower()
+    doc = doc.strip()
+    tokens = nltk.word_tokenize(doc)                                                          # tokenize document
+    filtered_tokens = [token for token in tokens if token not in stop_words]                  # filter stopwords out of document
+    doc = ' '.join(filtered_tokens)                                                           # re-create document from filtered tokens
+    return doc
+
+normalize_corpus = np.vectorize(normalize_document)
+
+norm_corpus = normalize_corpus(list(combined_df['Description']))
+
+tv = TfidfVectorizer(use_idf=True, min_df=3, max_df=0.8, ngram_range=(1,2), sublinear_tf=True)
+tv_matrix = tv.fit_transform(norm_corpus)
+km = KMeans(n_clusters=5,
+            max_iter=10000,
+            n_init = 50,
+            random_state = 42
+            ).fit(tv_matrix) # fit kmeans
+Counter(km.labels_) # find count of cluster labels
+# rerun kmeans with new cluster amount
+# apply counter
+
+combined_df['kmeans_cluster'] = km.labels_                                                   # assign cluster labels to new column in df
+
+repository_clusters = (combined_df[['Repository Name', 'kmeans_cluster', 'Stars']]                     # great a movie clusters df from title, cluster, and popularity
+                  .sort_values(by=['kmeans_cluster', 'Stars'],                 # sort in descending order of cluster and popularity
+                               ascending=False)
+                  .groupby('kmeans_cluster').head(20))                              # group by cluster, show top 20 movies
+repository_clusters = repository_clusters.copy(deep=True)
+repository_clusters
+
+feature_names = tv.get_feature_names_out()
+topn_features = 15
+ordered_centroids = km.cluster_centers_.argsort()[:, ::-1]
+
+
+for cluster_num in range(0,5):
+    key_features = [feature_names[index]
+                        for index in ordered_centroids[cluster_num, :topn_features]]
+    repositories = repository_clusters[repository_clusters['kmeans_cluster'] == cluster_num]['Repository Name'].values.tolist()
+    print('CLUSTER #'+str(cluster_num+1))
+    print('Key Features:', key_features)
+    print('Popular Repositories:', repositories)
+    print('-'*80)
+
+
+# Assuming 'km' is your trained KMeans model, and 'tv' is your TfidfVectorizer
+feature_names = tv.get_feature_names_out()
+topn_features = 15
+ordered_centroids = km.cluster_centers_.argsort()[:, ::-1]
+
+clusters_info = []
+for cluster_num in range(5):
+    key_features = [feature_names[index] for index in ordered_centroids[cluster_num, :topn_features]]
+    repositories = repository_clusters[repository_clusters['kmeans_cluster'] == cluster_num]['Repository Name'].values.tolist()
+    clusters_info.append((cluster_num, key_features, repositories))
+
+# Convert to DataFrame for easier manipulation
+df_clusters = pd.DataFrame(clusters_info, columns=['Cluster', 'Key Features', 'Repositories'])
+
+# Number of clusters
+num_clusters = df_clusters.shape[0]
+
+# Plotting
+for i in range(num_clusters):
+    plt.figure(figsize=(10, 6))
+    key_features = df_clusters.loc[i, 'Key Features']
+    y_pos = np.arange(len(key_features))
+    plt.barh(y_pos, range(len(key_features)), align='center')
+    plt.yticks(y_pos, key_features)
+    plt.gca().invert_yaxis()  # To display the highest values at the top
+    plt.xlabel('Feature Importance')
+    plt.title(f'Cluster {i+1} Key Features')
+    plt.show()
