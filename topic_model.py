@@ -59,16 +59,15 @@ def app():
     display_topics(doc_topic, vocabulary, no_top_words)
 
     def display_topics(model, feature_names, no_top_words):
-    for topic_idx, topic in enumerate(model.components_):
-        print("Topic %d:" % (topic_idx))
-        print(" ".join([feature_names[i] for i in topic.argsort()[:-no_top_words - 1:-1]]))
-    import pandas as pd
+        for topic_idx, topic in enumerate(model.components_):
+            print("Topic %d:" % (topic_idx))
+            print(" ".join([feature_names[i] for i in topic.argsort()[:-no_top_words - 1:-1]]))
 
-def prepare_topics(model, feature_names, no_top_words):
-    topic_dict = {}
-    for topic_idx, topic in enumerate(model.components_):
-        topic_dict["Topic %d" % (topic_idx)] = [feature_names[i] for i in topic.argsort()[:-no_top_words - 1:-1]]
-    return pd.DataFrame(topic_dict)
+    def prepare_topics(model, feature_names, no_top_words):
+        topic_dict = {}
+        for topic_idx, topic in enumerate(model.components_):
+            topic_dict["Topic %d" % (topic_idx)] = [feature_names[i] for i in topic.argsort()[:-no_top_words - 1:-1]]
+        return pd.DataFrame(topic_dict)
 
     fig, axes = plt.subplots(2, 2, figsize=(15, 10))
     axes = axes.flatten()
