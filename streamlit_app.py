@@ -39,9 +39,6 @@ nltk.download("punkt")
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 
-import pandas as pd
-import streamlit as st
-
 @st.cache
 def load_data(url):
     data = pd.read_csv(url)
@@ -163,6 +160,4 @@ plt.figure(figsize=(10, 5))
 plt.imshow(wordcloud, interpolation="bilinear")
 plt.axis("off")
 plt.show()
-
-
 
