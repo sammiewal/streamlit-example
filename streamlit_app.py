@@ -135,7 +135,6 @@ def calculate_word_metrics(text):
     return total_words, unique_words, lexical_div, avg_word_length
 
 combined_df[["Total Words", "Unique Words", "Lexical Diversity", "Avg Word Length"]] = combined_df['Description'].apply(calculate_word_metrics).apply(pd.Series)
-st.dataframe(combined_df.head())
 
 
 # add comments
@@ -147,8 +146,6 @@ combined_df['sentence_count'] = combined_df['Description'].apply(lambda x: str(x
 
 combined_df['avg_word_length'] = combined_df['Description'].apply(lambda x: sum(len(word) for word in str(x).split()) / len(str(x).split()) if len(str(x).split()) > 0 else 0)
 
-
-st.dataframe(combined_df.head())
 
 
 # Concatenate all descriptions into a single string
