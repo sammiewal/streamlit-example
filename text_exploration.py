@@ -394,4 +394,4 @@ for i in range(num_clusters):
     plt.gca().invert_yaxis()  # To display the highest values at the top
     plt.xlabel('Feature Importance')
     plt.title(f'Cluster {i+1} Key Features')
-    plt.show()
+    st.pyplot(plt)
