@@ -59,9 +59,11 @@ def filter_characters(text):
 lemmatizer = WordNetLemmatizer()
 
 def remove_special_characters(text):
-    # This will replace any character not a letter, digit, space, or underscore with an empty string
-    return re.sub(r'[^a-zA-Z0-9 _]', '', text)
-    
+    if isinstance(text, str):  # Check if the input is a string
+        return re.sub(r'[^a-zA-Z0-9 _]', '', text)
+    else:
+        return ''  # Return an empty string or some default value for non-string inputs
+
 # Define a function to clean text with lemmatization
 def clean_text(text):
     # Handle non-string inputs
@@ -99,8 +101,35 @@ combined_df = load_data(csv_url).copy()
 combined_df["Description"] = combined_df["Description"].apply(remove_special_characters)
 combined_df["Description"] = combined_df["Description"].apply(clean_text)
 
-
 combined_df = combined_df[['Repository Name', 'Repository URL', 'Description', 'Keyword', 'Stars']]
 combined_df['Description'] = combined_df['Keyword'].map(str) + ' ' + combined_df['Description'].map(str)
 
-st.write(combined_df['Description'])
+# Add in comments
+def expand_contractions(text):
+    expanded_words = []
+    for word in text.split():
+        expanded_words.append(contractions.fix(word))
+        expanded_text = ' '.join(expanded_words)
+    return expanded_text
+
+combined_df["Description"] = combined_df["Description"].apply(lambda x: clean_text(str(x)))
+
+from string import punctuation
+
+def calculate_word_metrics(text):
+    tokens = word_tokenize(text)
+    tokens = [token for token in tokens if token.lower() not in punctuation]
+
+    total_words = len(tokens)
+
+    # Handle the case where total_words is zero
+    if total_words == 0:
+        return total_words, None, None, None
+
+    unique_words = len(set(tokens))
+    lexical_div = unique_words / total_words
+    avg_word_length = sum(len(word) for word in tokens) / total_words
+
+    return total_words, unique_words, lexical_div, avg_word_length
+
+
