@@ -36,7 +36,19 @@ nltk.download("stopwords")
 nltk.download("punkt")
 
 
-combined_df = pd.read_csv('combined_data.csv')
+import pandas as pd
+import streamlit as st
+
+@st.cache
+def load_data(url):
+    data = pd.read_csv(url)
+    return data
+
+# URL of the raw CSV file
+csv_url = 'https://raw.githubusercontent.com/sammiewal/streamlit-example/master/combined_data.csv'
+
+# Load the data
+combined_df = load_data(csv_url)
 
 # Define a function to filter out specific characters
 def filter_characters(text):
