@@ -299,6 +299,9 @@ feature_names = vocabulary  # Replace 'vocabulary' with your actual vocabulary v
 # Prepare the topics data for visualization
 topics_df = prepare_topics(lda, feature_names, no_top_words)
 
+st.dataframe(topics_df)
+
+
 fig, axes = plt.subplots(2, 2, figsize=(15, 10))
 axes = axes.flatten()
 for i, ax in enumerate(axes):
