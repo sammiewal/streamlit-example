@@ -45,7 +45,7 @@ def load_data(url):
     return data
 
 # URL of the raw CSV file
-csv_url = 'https://raw.githubusercontent.com/sammiewal/streamlit-example/master/combined_data.csv'
+csv_url = 'https://raw.githubusercontent.com/sammiewal/streamlit-example/master/combined_data..csv'
 
 # Load the data
 combined_df = load_data(csv_url)
