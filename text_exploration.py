@@ -312,6 +312,10 @@ for i, ax in enumerate(axes):
 plt.tight_layout()
 st.pyplot(plt)
 
+
+st.title('Clusters')
+st.write('This is the main page of the app.')
+
 doc_topic_matrix = lda.transform(dtm)
 
 df_doc_topic = pd.DataFrame(doc_topic_matrix, columns=[f'Topic {i}' for i in range(lda.n_components)])
