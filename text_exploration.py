@@ -41,6 +41,9 @@ def load_data(url):
     data = pd.read_csv(url)
     return data
 
+st.title('Repository Rescue')
+st.write('This is the main page of the app.')
+
 # URL of the raw CSV file
 csv_url = 'https://raw.githubusercontent.com/sammiewal/streamlit-example/master/combined_data.csv'
 
