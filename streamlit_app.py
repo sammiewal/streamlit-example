@@ -151,8 +151,75 @@ st.dataframe(combined_df.head())
 # Concatenate all descriptions into a single string
 all_descriptions = " ".join(combined_df['Description'])
 
-# Generate a word cloud
-wordcloud = WordCloud(width=800, height=400).generate(all_descriptions)
+
+stopwords = set(stopwords.words('english'))
+
+new_stopwords = ['e', 'using']
+
+new_stopwords_list =  stopwords.union(new_stopwords)
+
+print(new_stopwords_list)
+
+from PIL import Image
+
+mask_image = Image.open('/content/github.png')
+
+# Convert the image to 'L' mode which gives you grayscale
+mask_image_gray = mask_image.convert('L')
+
+# Create a binary mask where white is 255 and black is 0
+mask_array = np.array(mask_image_gray)
+transformed_mask_image = np.where(mask_array == 255, 1, 0)
+
+
+import numpy as np
+from PIL import Image
+from wordcloud import WordCloud
+import matplotlib.pyplot as plt
+
+# Load the image file
+mask_image_color = Image.open(image_path)
+
+# Convert it to grayscale based on the alpha channel
+mask_image_gray = mask_image_color.split()[-1]
+
+# Create a binary mask where white is 255 and black is 0
+mask_array = np.array(mask_image_gray)
+transformed_mask_image = np.where(mask_array == 0, 0, 255)  # Inverting the mask if necessary
+
+# Define a new transformation function for clarity
+def transform_format(val):
+    if val == 0:
+        return 0  # Black
+    else:
+        return 255  # White
+
+# Apply the transformation to each pixel in the mask
+for i in range(len(transformed_mask_image)):
+    transformed_mask_image[i] = list(map(transform_format, transformed_mask_image[i]))
+
+
+# Convert it to grayscale
+mask_image_gray = mask_image_color.convert('L')
+
+# Create a binary mask where the guitar outline is white (255) and the background is black (0)
+# Assuming the guitar outline is currently black and the background is white
+mask_array = np.array(mask_image_gray)
+transformed_mask_image = np.where(mask_array < 128, 0, 255)  # Adjust threshold as necessary
+
+
+# Create the word cloud object with additional parameters
+wordcloud = WordCloud(
+    background_color='black',
+    mask=transformed_mask_image,
+    width=2000,
+    height=2000,
+    max_font_size=300,  # Adjust the maximum font size if necessary
+    stopwords=new_stopwords_list,
+    contour_color='steelblue',
+    contour_width=2
+).generate(all_descriptions)
+
 plt.figure(figsize = (8, 8), facecolor = None) 
 plt.imshow(wordcloud) 
 plt.axis("off") 
