@@ -21,6 +21,10 @@ from sklearn.metrics.pairwise import cosine_similarity
 nltk.download('wordnet')
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
+from sklearn.decomposition import LatentDirichletAllocation
+from gensim.models.coherencemodel import CoherenceModel
+from gensim.corpora.dictionary import Dictionary
+import gensim
 
 # Download NLTK stopwords data if not already downloaded
 nltk.download("stopwords")
@@ -231,3 +235,77 @@ plt.xlabel("Stars")
 plt.ylabel("Word Count")
 plt.title("Stars vs. Word Count")
 st.pyplot(plt)  # Using st.pyplot() to display the figure
+
+
+st.title('Topic Modeling')
+st.write('This is the main page of the app.')
+preprocessed_data = combined_df['Description']
+tv = TfidfVectorizer(min_df=3, max_df=0.7, ngram_range=(2,2))
+dtm = tv.fit_transform(preprocessed_data)
+vocabulary = np.array(tv.get_feature_names_out())
+# Fit LDA Model
+lda = LatentDirichletAllocation(n_components=4, random_state=42)
+lda.fit(dtm)
+
+def display_topics(model, feature_names, no_top_words):
+    for topic_idx, topic in enumerate(model.components_):
+        print("Topic %d:" % (topic_idx))
+        print(", ".join([feature_names[i] for i in topic.argsort()[:-no_top_words - 1:-1]]))
+
+
+no_top_words = 10
+display_topics(lda, vocabulary, no_top_words)
+
+def custom_tokenizer(text):
+    tokens = nltk.word_tokenize(text)
+    english_stopwords = set(stopwords.words('english'))  # Convert to a set for faster lookup
+    tokens = [token for token in tokens if token not in english_stopwords]
+    bigrams = ["_".join(tokens[i:i+2]) for i in range(len(tokens)-1)]
+    return bigrams
+
+# Assuming preprocessed_data is defined and accessible
+tokenized_texts = [custom_tokenizer(text) for text in preprocessed_data]
+
+gensim_dict = Dictionary(tokenized_texts)
+gensim_dict.filter_extremes(no_below=2, no_above=0.70) # we need to set this to the same filtering we did during our vectorization step
+print(gensim_dict)
+
+lda = LatentDirichletAllocation(n_components=4, random_state=42)
+doc_topic = lda.fit(dtm)
+
+no_top_words = 10
+display_topics(doc_topic, vocabulary, no_top_words)
+
+def display_topics(model, feature_names, no_top_words):
+    for topic_idx, topic in enumerate(model.components_):
+        print("Topic %d:" % (topic_idx))
+        print(" ".join([feature_names[i] for i in topic.argsort()[:-no_top_words - 1:-1]]))
+
+def prepare_topics(model, feature_names, no_top_words):
+    topic_dict = {}
+    for topic_idx, topic in enumerate(model.components_):
+        topic_dict["Topic %d" % (topic_idx)] = [feature_names[i] for i in topic.argsort()[:-no_top_words - 1:-1]]
+    return pd.DataFrame(topic_dict)
+
+# Fit the LDA model
+lda = LatentDirichletAllocation(n_components=4, random_state=42)
+lda.fit(dtm)
+
+# Get the feature names (vocabulary)
+feature_names = vocabulary  # Replace 'vocabulary' with your actual vocabulary variable
+
+# Prepare the topics data for visualization
+topics_df = prepare_topics(lda, feature_names, no_top_words)
+
+fig, axes = plt.subplots(2, 2, figsize=(15, 10))
+axes = axes.flatten()
+for i, ax in enumerate(axes):
+    topic = lda.components_[i]
+    top_word_indices = topic.argsort()[-no_top_words:]
+    ax.barh(range(no_top_words), topic[top_word_indices])
+    ax.set_yticks(range(no_top_words))
+    ax.set_yticklabels([feature_names[j] for j in top_word_indices])
+    ax.set_title('Topic %d' % i)
+
+plt.tight_layout()
+st.pyplot(plt)
