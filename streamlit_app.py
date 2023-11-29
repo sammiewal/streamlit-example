@@ -45,7 +45,7 @@ def load_data(url):
     return data
 
 # URL of the raw CSV file
-csv_url = 'https://raw.githubusercontent.com/sammiewal/streamlit-example/master/combined_data..csv'
+csv_url = 'https://raw.githubusercontent.com/sammiewal/streamlit-example/master/combined_data.csv'
 
 # Load the data
 combined_df = load_data(csv_url)
@@ -60,12 +60,14 @@ lemmatizer = WordNetLemmatizer()
 
 # Define a function to clean text with lemmatization
 def clean_text(text):
+    # Handle non-string inputs
+    if not isinstance(text, str):
+        return ''
+
     exclude_text = "中英文敏感词语言检测中外手机电话归属地运营商查询名字推断性别手机号抽取身份证抽取邮箱抽取中日"
 
-    # Check if the tweet contains any character from exclude_text
     if any(char in text for char in exclude_text):
         return ''
-    text = filter_characters(text)  # Apply character filtering
 
     # Remove URLs, mentions, hashtags, and non-alphanumeric characters in one step
     text = re.sub(r'http\S+|@\S+|#|[^\w\s]', '', text)
