@@ -217,18 +217,6 @@ wordcloud = WordCloud(
     contour_width=2
 ).generate(all_descriptions)
 
-plt.figure(figsize = (8, 8), facecolor = None) 
-plt.imshow(wordcloud) 
-plt.axis("off") 
-plt.tight_layout(pad = 0) 
-
-# Save the plot as a file
-plt.savefig('wordcloud.png')
-plt.close()
-
-# Open the image and display it in Streamlit
-st.image('wordcloud.png')
-
 fig, ax = plt.subplots()
 ax.imshow(wordcloud, interpolation='bilinear')
 ax.axis("off")
