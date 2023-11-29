@@ -8,7 +8,8 @@ from urllib import request
 from bs4 import BeautifulSoup                                                                                   # needed for parsing HTML
 import contractions                                                                                             # contractions dictionary
 from string import punctuation
-import spacy                                                                                                    # used for lemmatization/stemming
+import spacy             
+from string import punctuation
 from nltk.tokenize.toktok import ToktokTokenizer
 from nltk.corpus import stopwords
 tokenizer = ToktokTokenizer()                                                                                   # stopword removal
@@ -35,6 +36,8 @@ from nltk.stem import WordNetLemmatizer
 nltk.download("stopwords")
 nltk.download("punkt")
 
+from wordcloud import WordCloud
+import matplotlib.pyplot as plt
 
 import pandas as pd
 import streamlit as st
@@ -114,7 +117,6 @@ def expand_contractions(text):
 
 combined_df["Description"] = combined_df["Description"].apply(lambda x: clean_text(str(x)))
 
-from string import punctuation
 
 def calculate_word_metrics(text):
     tokens = word_tokenize(text)
@@ -131,5 +133,36 @@ def calculate_word_metrics(text):
     avg_word_length = sum(len(word) for word in tokens) / total_words
 
     return total_words, unique_words, lexical_div, avg_word_length
+
+combined_df[["Total Words", "Unique Words", "Lexical Diversity", "Avg Word Length"]] = combined_df['Description'].apply(calculate_word_metrics).apply(pd.Series)
+combined_df.head()
+
+
+# add comments
+combined_df['word_count'] = combined_df['Description'].apply(lambda x: len(str(x).split())) # splitting up tokens and counting
+
+
+combined_df['sentence_count'] = combined_df['Description'].apply(lambda x: str(x).count('.') + str(x).count('!') + str(x).count('?'))
+
+
+combined_df['avg_word_length'] = combined_df['Description'].apply(lambda x: sum(len(word) for word in str(x).split()) / len(str(x).split()) if len(str(x).split()) > 0 else 0)
+
+
+combined_df.head()
+
+
+
+# Concatenate all descriptions into a single string
+all_descriptions = " ".join(combined_df['Description'])
+
+# Generate a word cloud
+wordcloud = WordCloud(width=800, height=400).generate(all_descriptions)
+
+# Display the word cloud
+plt.figure(figsize=(10, 5))
+plt.imshow(wordcloud, interpolation="bilinear")
+plt.axis("off")
+plt.show()
+
 
 
