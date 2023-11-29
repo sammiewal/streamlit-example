@@ -6,8 +6,8 @@ from topic_model import app as topic_model_app
 
 PAGES = {
     "Main Page": main_page_app,
-    "Text Exploration": text_exploration_app
-    "Repository Recommendation": recommend_app
+    "Text Exploration": text_exploration_app,
+    "Repository Recommendation": recommend_app,
     "Topic Modeling": topic_model_app
 }
 
