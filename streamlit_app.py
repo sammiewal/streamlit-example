@@ -39,7 +39,7 @@ nltk.download("punkt")
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 
-@st.cache
+@st.cache_data
 def load_data(url):
     data = pd.read_csv(url)
     return data
