@@ -381,6 +381,8 @@ for cluster_num in range(5):
 # Convert to DataFrame for easier manipulation
 df_clusters = pd.DataFrame(clusters_info, columns=['Cluster', 'Key Features', 'Repositories'])
 
+st.dataframe(df_clusters)
+
 # Number of clusters
 num_clusters = df_clusters.shape[0]
 
