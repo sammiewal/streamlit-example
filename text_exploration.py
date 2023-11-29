@@ -87,7 +87,7 @@ def clean_text(text):
     cleaned_words = [word.lower() for word in words if word.isalnum()]
 
     # Remove stopwords
-    stop_words = set(stopwords.words("english"))
+    stop_words = set(nltk_stopwords.words("english"))
     cleaned_words = [word for word in cleaned_words if word not in stop_words]
 
     # Lemmatize
@@ -153,7 +153,7 @@ combined_df['avg_word_length'] = combined_df['Description'].apply(lambda x: sum(
 all_descriptions = " ".join(combined_df['Description'])
 
 
-stopwords = set(stopwords.words('english'))
+stopwords = set(nltk_stopwords.words('english'))
 
 new_stopwords = ['e', 'using']
 
