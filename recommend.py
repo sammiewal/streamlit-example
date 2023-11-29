@@ -1,5 +1,3 @@
-# main_page.py
-
 import streamlit as st
 
 def app():
