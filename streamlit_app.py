@@ -8,6 +8,7 @@ from urllib import request
 from bs4 import BeautifulSoup                                                                                   # needed for parsing HTML
 import contractions                                                                                             # contractions dictionary
 from string import punctuation
+import seaborn as sns
 import spacy             
 from string import punctuation
 from nltk.tokenize.toktok import ToktokTokenizer
@@ -221,3 +222,22 @@ fig, ax = plt.subplots()
 ax.imshow(wordcloud, interpolation='bilinear')
 ax.axis("off")
 st.pyplot(fig)
+
+# Heatmap for correlations
+plt.figure(figsize=(10, 8))
+sns.heatmap(combined_df[['Total Words', 'Unique Words', 'Lexical Diversity', 'Avg Word Length', 'word_count', 'sentence_count', 'avg_word_length']].corr(), annot=True)
+plt.title('Correlation Heatmap')
+st.pyplot(plt)  # Using st.pyplot() to display the figure
+
+
+# Scatter plot of Stars vs. Forks
+plt.figure(figsize=(10, 6))
+plt.scatter(combined_df["Stars"], combined_df["word_count"], alpha=0.5)
+plt.xlabel("Stars")
+plt.ylabel("Word Count")
+plt.title("Stars vs. Word Count")
+st.pyplot(plt)  # Using st.pyplot() to display the figure
+
+
+
+
