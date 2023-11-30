@@ -467,6 +467,14 @@ doc_sim_df.head()
 repository_list = combined_df['Repository Name'].values
 repository_list
 
+# extracting the similarity scores associated with the sample movie
+repository_similarities = doc_sim_df[repository_idx].values
+repository_similarities
+
+similar_repository_idxs = np.argsort(repository_similarities)[1:6]                                                 # save the movie index of the top 5 highest similarity scores
+similar_repository = repository_list[similar_repository_idxs]                                                         # pull out the movie names associated with those top 5 movie indices
+similar_repository
+
 def repository_recommender(repository_name, repository_list, doc_sim_df):
     try:
         repository_idx = np.where(repository_list == repository_name)[0][0]
