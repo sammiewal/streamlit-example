@@ -467,13 +467,31 @@ doc_sim_df.head()
 repository_list = combined_df['Repository Name'].values
 repository_list
 
-# Streamlit text input for user input
-input_repository = st.text_input('Enter the repository name:')
+def repository_recommender(repository_name, repository_list, doc_sim_df):
+    try:
+        repository_idx = np.where(repository_list == repository_name)[0][0]
+        repository_similarities = doc_sim_df.iloc[repository_idx].values
+        similar_repository_idxs = np.argsort(repository_similarities)[::-1][1:6]
+        similar_repositories = repository_list[similar_repository_idxs]
+        return similar_repositories
+    except IndexError:
+        return ["Repository not found."]
+# Streamlit interface
+st.title('Repository Recommender System')
 
-if input_repository:
-    # Check if the repository is in the list
-    if input_repository in repository_list:
-        repository_idx = np.where(repository_list == input_repository)[0][0]
-        st.write(f'The index of "{input_repository}" is: {repository_idx}')
-    else:
-        st.write(f'"{input_repository}" is not in the repository list.')
+# Dropdown for repository recommender
+selected_repository = st.selectbox('Select a repository:', repository_list)
+if st.button('Recommend Repositories'):
+    recommendations = repository_recommender(selected_repository, repository_list, doc_sim_df)
+    st.write("Based on your interest in", selected_repository, ", I'd recommend checking out:")
+    for repo in recommendations:
+        st.write(repo)
+
+# Text input for query repository recommender
+search_query = st.text_input('Enter a search query:')
+if st.button('Find Similar Repositories'):
+    query_recommendations = query_repository_recommender(search_query, repository_list, tfidf_matrix, tv)
+    st.write("Based on your search query, I'd recommend checking out:")
+    for repo in query_recommendations:
+        st.write(repo)
+
