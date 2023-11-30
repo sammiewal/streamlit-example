@@ -411,6 +411,24 @@ for i in range(num_clusters):
     print('-'*80)
 
 
+# Assuming df_clusters is your existing DataFrame with cluster information
+
+# Create a list of dictionaries, each representing a cluster
+clusters_summary = [
+    {
+        "Cluster Number": i + 1,
+        "Key Features": ', '.join(df_clusters.loc[i, 'Key Features']),
+        "Popular Repositories": ', '.join(df_clusters.loc[i, 'Repositories'])
+    }
+    for i in range(num_clusters)
+]
+
+# Convert the list of dictionaries to a DataFrame
+summary_df = pd.DataFrame(clusters_summary)
+
+# Display the summary DataFrame
+st.dataframe(summary_df)
+
 cosine_sim_features = cosine_similarity(tv_matrix)# get cosine similarity features from tv_matrix
 
 ap = AffinityPropagation(max_iter=500)
