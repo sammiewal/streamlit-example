@@ -386,8 +386,6 @@ for cluster_num in range(5):
 
 df_clusters = pd.DataFrame(clusters_info, columns=['Cluster', 'Key Features', 'Repositories'])
 
-st.dataframe(df_clusters)
-
 # Number of clusters
 num_clusters = df_clusters.shape[0]
 
@@ -465,3 +463,17 @@ doc_sim = cosine_similarity(tfidf_matrix)    # compute document similarity by ex
 doc_sim_df = pd.DataFrame(doc_sim)                                                  # take doc_sim, convert to dataframe
 doc_sim_df.head()
 
+# saving all the unique movie titles to a list
+repository_list = combined_df['Repository Name'].values
+repository_list
+
+# Streamlit text input for user input
+input_repository = st.text_input('Enter the repository name:')
+
+if input_repository:
+    # Check if the repository is in the list
+    if input_repository in repository_list:
+        repository_idx = np.where(repository_list == input_repository)[0][0]
+        st.write(f'The index of "{input_repository}" is: {repository_idx}')
+    else:
+        st.write(f'"{input_repository}" is not in the repository list.')
