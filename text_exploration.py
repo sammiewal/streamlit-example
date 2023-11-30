@@ -467,6 +467,10 @@ doc_sim_df.head()
 repository_list = combined_df['Repository Name'].values
 repository_list
 
+# extracted the index number
+repository_idx = np.where(repository_list == 'rails_admin')[0][0]
+repository_idx
+
 # extracting the similarity scores associated with the sample movie
 repository_similarities = doc_sim_df[repository_idx].values
 repository_similarities
