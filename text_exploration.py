@@ -386,6 +386,7 @@ for cluster_num in range(5):
 
 df_clusters = pd.DataFrame(clusters_info, columns=['Cluster', 'Key Features', 'Repositories'])
 
+st.dataframe(df_clusters)
 
 # Number of clusters
 num_clusters = df_clusters.shape[0]
@@ -408,7 +409,8 @@ for i in range(num_clusters):
     print('Key Features:', df_clusters.loc[i, 'Key Features'])
     print('Popular Repositories:', df_clusters.loc[i, 'Repositories'])
     print('-'*80)
-    st.write('-'*80)
+
+st.dataframe(num_clusters)
 
 
 cosine_sim_features = cosine_similarity(tv_matrix)# get cosine similarity features from tv_matrix
@@ -438,5 +440,12 @@ for cluster_num in filtered_clusters:
     print('Exemplar:', exemplar_repository)
     print('Popular Repositories:', repositories)
     print('-'*80)
-    st.write('-'*80)
+
+                         # set parameters for tf-idf for unigrams and bigrams
+tfidf_matrix = tv.fit_transform(norm_corpus)                                      # extract tfidf features from norm_corpus
+tfidf_matrix.shape
+
+doc_sim = cosine_similarity(tfidf_matrix)    # compute document similarity by examining the cosine similairty b/w documents in matrix
+doc_sim_df = pd.DataFrame(doc_sim)                                                  # take doc_sim, convert to dataframe
+doc_sim_df.head()
 
