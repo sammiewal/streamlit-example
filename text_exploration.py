@@ -388,7 +388,13 @@ for cluster_num in range(5):
 # Convert to DataFrame for easier manipulation
 df_clusters = pd.DataFrame(clusters_info, columns=['Cluster', 'Key Features', 'Repositories'])
 
-st.dataframe(df_clusters)
+for i in range(num_clusters):
+    print(f'CLUSTER #{i+1}')
+    print('Key Features:', df_clusters.loc[i, 'Key Features'])
+    print('Popular Repositories:', df_clusters.loc[i, 'Repositories'])
+    print('-'*80)
+
+st.dataframe(num_clusters)
 
 # Number of clusters
 num_clusters = df_clusters.shape[0]
