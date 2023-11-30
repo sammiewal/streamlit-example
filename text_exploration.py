@@ -410,3 +410,33 @@ for i in range(num_clusters):
     st.pyplot(plt)
 
     st.dataframe(num_clusters)
+
+cosine_sim_features = cosine_similarity(tv_matrix)# get cosine similarity features from tv_matrix
+
+ap = AffinityPropagation(max_iter=500)
+ap.fit(cosine_sim_features)
+res = Counter(ap.labels_)
+res.most_common(10)
+
+combined_df['affprop_cluster'] = ap.labels_
+filtered_clusters = [item[0] for item in res.most_common(8)]
+filtered_df = combined_df[combined_df['affprop_cluster'].isin(filtered_clusters)]
+repository_clusters = (filtered_df[['Repository Name', 'affprop_cluster', 'Stars']]
+                  .sort_values(by=['affprop_cluster', 'Stars'],
+                               ascending=False)
+                  .groupby('affprop_cluster').head(20))
+repository_clusters = repository_clusters.copy(deep=True)
+
+# get exemplars
+exemplars = combined_df.loc[ap.cluster_centers_indices_]['Repository Name'].values.tolist()
+
+# get movies belonging to each cluster
+for cluster_num in filtered_clusters:
+    repositories = repository_clusters[repository_clusters['affprop_cluster'] == cluster_num]['Repository Name'].values.tolist()
+    exemplar_repository = combined_df[combined_df.index == ap.cluster_centers_indices_[cluster_num]]['Repository Name'].values[0]
+    print('CLUSTER #'+str(cluster_num))
+    print('Exemplar:', exemplar_repository)
+    print('Popular Repositories:', repositories)
+    print('-'*80)
+    st.write('-'*80)
+
