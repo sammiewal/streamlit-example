@@ -143,10 +143,6 @@ combined_df[["Total Words", "Unique Words", "Lexical Diversity", "Avg Word Lengt
 # add comments
 combined_df['word_count'] = combined_df['Description'].apply(lambda x: len(str(x).split())) # splitting up tokens and counting
 
-
-combined_df['sentence_count'] = combined_df['Description'].apply(lambda x: str(x).count('.') + str(x).count('!') + str(x).count('?'))
-
-
 combined_df['avg_word_length'] = combined_df['Description'].apply(lambda x: sum(len(word) for word in str(x).split()) / len(str(x).split()) if len(str(x).split()) > 0 else 0)
 
 
@@ -225,7 +221,7 @@ st.pyplot(fig)
 
 # Heatmap for correlations
 plt.figure(figsize=(10, 8))
-sns.heatmap(combined_df[['Total Words', 'Unique Words', 'Lexical Diversity', 'Avg Word Length', 'word_count', 'sentence_count', 'avg_word_length']].corr(), annot=True)
+sns.heatmap(combined_df[['Total Words', 'Unique Words', 'Lexical Diversity', 'Avg Word Length', 'word_count', 'avg_word_length']].corr(), annot=True)
 plt.title('Correlation Heatmap')
 st.pyplot(plt)  # Using st.pyplot() to display the figure
 
@@ -408,8 +404,6 @@ for i in range(num_clusters):
     plt.xlabel('Feature Importance')
     plt.title(f'Cluster {i+1} Key Features')
     st.pyplot(plt)
-
-    st.dataframe(num_clusters)
 
 cosine_sim_features = cosine_similarity(tv_matrix)# get cosine similarity features from tv_matrix
 
