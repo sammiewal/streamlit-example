@@ -12,6 +12,7 @@ import seaborn as sns
 import spacy             
 from string import punctuation
 from nltk.tokenize.toktok import ToktokTokenizer
+from sklearn.cluster import AffinityPropagation
 from nltk.corpus import stopwords as nltk_stopwords 
 tokenizer = ToktokTokenizer()                                                                                   # stopword removal
 import pandas as pd
