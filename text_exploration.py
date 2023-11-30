@@ -394,8 +394,6 @@ for i in range(num_clusters):
     print('Popular Repositories:', df_clusters.loc[i, 'Repositories'])
     print('-'*80)
 
-st.dataframe(num_clusters)
-
 # Number of clusters
 num_clusters = df_clusters.shape[0]
 
@@ -410,3 +408,5 @@ for i in range(num_clusters):
     plt.xlabel('Feature Importance')
     plt.title(f'Cluster {i+1} Key Features')
     st.pyplot(plt)
+
+    st.dataframe(num_clusters)
