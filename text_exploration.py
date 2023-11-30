@@ -382,13 +382,9 @@ for cluster_num in range(5):
     clusters_info.append((cluster_num, key_features, repositories))
 
 # Convert to DataFrame for easier manipulation
+
 df_clusters = pd.DataFrame(clusters_info, columns=['Cluster', 'Key Features', 'Repositories'])
 
-for i in range(num_clusters):
-    print(f'CLUSTER #{i+1}')
-    print('Key Features:', df_clusters.loc[i, 'Key Features'])
-    print('Popular Repositories:', df_clusters.loc[i, 'Repositories'])
-    print('-'*80)
 
 # Number of clusters
 num_clusters = df_clusters.shape[0]
@@ -404,6 +400,15 @@ for i in range(num_clusters):
     plt.xlabel('Feature Importance')
     plt.title(f'Cluster {i+1} Key Features')
     st.pyplot(plt)
+
+
+for i in range(num_clusters):
+    print(f'CLUSTER #{i+1}')
+    print('Key Features:', df_clusters.loc[i, 'Key Features'])
+    print('Popular Repositories:', df_clusters.loc[i, 'Repositories'])
+    print('-'*80)
+    st.write('-'*80)
+
 
 cosine_sim_features = cosine_similarity(tv_matrix)# get cosine similarity features from tv_matrix
 
