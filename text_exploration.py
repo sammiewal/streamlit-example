@@ -410,8 +410,6 @@ for i in range(num_clusters):
     print('Popular Repositories:', df_clusters.loc[i, 'Repositories'])
     print('-'*80)
 
-st.dataframe(num_clusters)
-
 
 cosine_sim_features = cosine_similarity(tv_matrix)# get cosine similarity features from tv_matrix
 
