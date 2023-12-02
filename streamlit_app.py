@@ -125,11 +125,14 @@ tv_matrix = tv.fit_transform(norm_corpus)
 
                          # set parameters for tf-idf for unigrams and bigrams
 tfidf_matrix = tv.fit_transform(norm_corpus)                                      # extract tfidf features from norm_corpus
-tfidf_matrix.shape
 
 doc_sim = cosine_similarity(tfidf_matrix)    # compute document similarity by examining the cosine similairty b/w documents in matrix
 doc_sim_df = pd.DataFrame(doc_sim)                                                  # take doc_sim, convert to dataframe
 doc_sim_df.head()
+
+# saving all the unique movie titles to a list
+repository_list = combined_df['Repository Name'].values
+repository_list
 
 # Create a Streamlit app
 st.title('Repository Recommender System')
