@@ -140,7 +140,7 @@ st.title('Repository Recommender System')
 search_query = st.text_input('Enter a search query:')
 
 # Function to find similar repositories based on the search query
-def query_repository_recommender(search_query, repository_list, tfidf_matrix, tv):
+def query_repository_recommender(search_query, repository_list, tfidf_matrix, tv, combined_df):
     try:
         # Transform the search query into its vector form
         query_vector = tv.transform([search_query])
@@ -157,18 +157,16 @@ def query_repository_recommender(search_query, repository_list, tfidf_matrix, tv
 
 # Button to trigger the search and display recommendations
 if st.button('Find Similar Repositories'):
-    query_recommendations = query_repository_recommender(search_query, repository_list, tfidf_matrix, tv)
-    
-    # Debugging print statements to check if variables are correct
-    print("Search Query:", search_query)
-    print("Recommendations:", query_recommendations)
+    query_recommendations = query_repository_recommender(search_query, repository_list, tfidf_matrix, tv, combined_df)
     
     if "Error" in query_recommendations[0]:
         st.write("An error occurred:", query_recommendations[0])
     else:
         st.write("Based on your search query, I'd recommend checking out:")
         for repo in query_recommendations:
-            st.write(repo)
-
-
+            # Retrieve the corresponding repository URL from the DataFrame
+            repo_url = combined_df.loc[combined_df['Repository Name'] == repo, 'Repository URL'].values[0]
+            
+            # Display the repository name as a clickable hyperlink
+            st.markdown(f"[{repo}]({repo_url})")
 
