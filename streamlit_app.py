@@ -113,8 +113,20 @@ combined_df["Description"] = combined_df["Description"].apply(clean_text)
 combined_df = combined_df[['Repository Name', 'Repository URL', 'Description', 'Keyword', 'Stars']]
 combined_df['Description'] = combined_df['Keyword'].map(str) + ' ' + combined_df['Description'].map(str)
 
+    doc = re.sub(r'[^a-zA-Z0-9\s]', '', doc, re.I|re.A)                                       # lower case and remove special characters\whitespaces
+    doc = doc.lower()
+    doc = doc.strip()
+    tokens = nltk.word_tokenize(doc)                                                          # tokenize document
+    filtered_tokens = [token for token in tokens if token not in stop_words]                  # filter stopwords out of document
+    doc = ' '.join(filtered_tokens)                                                           # re-create document from filtered tokens
+    return doc
 
+normalize_corpus = np.vectorize(normalize_document)
 
+norm_corpus = normalize_corpus(list(combined_df['Description']))
+
+tv = TfidfVectorizer(use_idf=True, min_df=3, max_df=0.8, ngram_range=(1,2), sublinear_tf=True)
+tv_matrix = tv.fit_transform(norm_corpus)
 
                          # set parameters for tf-idf for unigrams and bigrams
 tfidf_matrix = tv.fit_transform(norm_corpus)                                      # extract tfidf features from norm_corpus
