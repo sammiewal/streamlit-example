@@ -49,7 +49,7 @@ def load_data(url):
     return data
 
 st.title('Repository Refiner')
-st.write('Analyze trending topics amongst the GitHub community. ')
+st.write('Dive into the GitHub Repository Refiner and start exploring the interconnected world of open-source projects like never before. Whether you're looking to contribute, collaborate, or simply satisfy your curiosity, our tool is here to refine your search and discovery process on GitHub.')
 
 # URL of the raw CSV file
 csv_url = 'https://raw.githubusercontent.com/sammiewal/streamlit-example/master/combined_data.csv'
@@ -154,7 +154,7 @@ all_descriptions = " ".join(combined_df['Description'])
 
 stopwords = set(nltk_stopwords.words('english'))
 
-new_stopwords = ['e', 'using']
+new_stopwords = ['e', 'c', 'using']
 
 new_stopwords_list =  stopwords.union(new_stopwords)
 
