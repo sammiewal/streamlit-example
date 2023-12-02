@@ -48,8 +48,8 @@ def load_data(url):
     data = pd.read_csv(url)
     return data
 
-st.title('Repository Rescue')
-st.write('This is the main page of the app.')
+st.title('Repository Refiner')
+st.write('Analyze trending topics amongst the GitHub community. ')
 
 # URL of the raw CSV file
 csv_url = 'https://raw.githubusercontent.com/sammiewal/streamlit-example/master/combined_data.csv'
@@ -202,6 +202,7 @@ mask_image_gray = mask_image_color.convert('L')
 mask_array = np.array(mask_image_gray)
 transformed_mask_image = np.where(mask_array < 128, 0, 255)  # Adjust threshold as necessary
 
+st.write('Analyze trending topics amongst the GitHub community.')
 
 # Create the word cloud object with additional parameters
 wordcloud = WordCloud(
@@ -238,6 +239,7 @@ st.pyplot(plt)  # Using st.pyplot() to display the figure
 
 st.title('Topic Modeling')
 st.write('This is the main page of the app.')
+
 preprocessed_data = combined_df['Description']
 tv = TfidfVectorizer(min_df=3, max_df=0.7, ngram_range=(2,2))
 dtm = tv.fit_transform(preprocessed_data)
@@ -310,6 +312,55 @@ for i, ax in enumerate(axes):
 
 plt.tight_layout()
 st.pyplot(plt)
+
+
+# New topic names
+new_topic_names = {
+    0: "Open-Source Web Development",
+    1: "Machine Learning and Development Standards",
+    2: "Cloud Computing and Open-Source Frameworks",
+    3: "Artificial Intelligence and Developer Resources",
+}
+
+# Modified display_topics function to use new topic names
+def display_topics(model, feature_names, no_top_words, topic_names):
+    for topic_idx, topic in enumerate(model.components_):
+        print(f"{topic_names.get(topic_idx, 'Topic ' + str(topic_idx))}:")
+        print(" ".join([feature_names[i]
+                        for i in topic.argsort()[:-no_top_words - 1:-1]]))
+
+# Prepare the topics data for visualization with new topic names
+def prepare_topics(model, feature_names, no_top_words, topic_names):
+    topic_dict = {}
+    for topic_idx, topic in enumerate(model.components_):
+        topic_key = topic_names.get(topic_idx, 'Topic ' + str(topic_idx))
+        topic_dict[topic_key] = [feature_names[i] for i in topic.argsort()[:-no_top_words - 1:-1]]
+    return pd.DataFrame(topic_dict)
+
+# Use the modified display_topics function
+display_topics(lda, feature_names, no_top_words, new_topic_names)
+
+# Prepare the topics data for visualization
+topics_df = prepare_topics(lda, feature_names, no_top_words, new_topic_names)
+
+# Show the topics dataframe in Streamlit
+st.dataframe(topics_df)
+
+# Create the plots with new topic names
+fig, axes = plt.subplots(2, 2, figsize=(15, 10))
+axes = axes.flatten()
+for i, ax in enumerate(axes):
+    topic = lda.components_[i]
+    top_word_indices = topic.argsort()[-no_top_words:]
+    ax.barh(range(no_top_words), topic[top_word_indices])
+    ax.set_yticks(range(no_top_words))
+    ax.set_yticklabels([feature_names[j] for j in top_word_indices])
+    ax.set_title(new_topic_names.get(i, f'Topic {i}'))
+
+plt.tight_layout()
+st.pyplot(fig)
+
+
 
 
 st.title('Clusters')
