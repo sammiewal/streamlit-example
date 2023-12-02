@@ -423,6 +423,17 @@ df_clusters = pd.DataFrame(clusters_info, columns=['Cluster', 'Key Features', 'R
 # Number of clusters
 num_clusters = df_clusters.shape[0]
 
+
+# Define new cluster names
+new_cluster_names = {
+    0: "Open-Source Web Development",
+    1: "API Development & Integration",
+    2: "Curated Development Resources",
+    3: "Open-Source Software and Security",
+    4: "Machine Learning & Deep Learning Technologies",
+    # Add more if there are more clusters
+}
+
 # Plotting
 for i in range(num_clusters):
     plt.figure(figsize=(10, 6))
@@ -432,23 +443,14 @@ for i in range(num_clusters):
     plt.yticks(y_pos, key_features)
     plt.gca().invert_yaxis()  # To display the highest values at the top
     plt.xlabel('Feature Importance')
-    plt.title(f'Cluster {i+1} Key Features')
+    # Use the new cluster names for the plot title
+    plt.title(new_cluster_names.get(i, f'Cluster {i+1}'))
     st.pyplot(plt)
 
-
-#for i in range(num_clusters):
-    #print(f'CLUSTER #{i+1}')
-    #print('Key Features:', df_clusters.loc[i, 'Key Features'])
-    #print('Popular Repositories:', df_clusters.loc[i, 'Repositories'])
-    #print('-'*80)
-
-
-# Assuming df_clusters is your existing DataFrame with cluster information
-
-# Create a list of dictionaries, each representing a cluster
+# Update clusters_summary to use new cluster names for the summary DataFrame
 clusters_summary = [
     {
-        "Cluster Number": i + 1,
+        "Cluster Name": new_cluster_names.get(i, f'Cluster {i+1}'),
         "Key Features": ', '.join(df_clusters.loc[i, 'Key Features']),
         "Popular Repositories": ', '.join(df_clusters.loc[i, 'Repositories'])
     }
@@ -457,6 +459,7 @@ clusters_summary = [
 
 # Convert the list of dictionaries to a DataFrame
 summary_df = pd.DataFrame(clusters_summary)
+
 
 # Display the summary DataFrame
 st.dataframe(summary_df)
