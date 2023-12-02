@@ -300,20 +300,6 @@ topics_df = prepare_topics(lda, feature_names, no_top_words)
 
 st.dataframe(topics_df)
 
-fig, axes = plt.subplots(2, 2, figsize=(15, 10))
-axes = axes.flatten()
-for i, ax in enumerate(axes):
-    topic = lda.components_[i]
-    top_word_indices = topic.argsort()[-no_top_words:]
-    ax.barh(range(no_top_words), topic[top_word_indices])
-    ax.set_yticks(range(no_top_words))
-    ax.set_yticklabels([feature_names[j] for j in top_word_indices])
-    ax.set_title('Topic %d' % i)
-
-plt.tight_layout()
-st.pyplot(plt)
-
-
 # New topic names
 new_topic_names = {
     0: "Open-Source Web Development",
@@ -343,8 +329,6 @@ display_topics(lda, feature_names, no_top_words, new_topic_names)
 # Prepare the topics data for visualization
 topics_df = prepare_topics(lda, feature_names, no_top_words, new_topic_names)
 
-# Show the topics dataframe in Streamlit
-st.dataframe(topics_df)
 
 # Create the plots with new topic names
 fig, axes = plt.subplots(2, 2, figsize=(15, 10))
