@@ -288,6 +288,8 @@ def prepare_topics(model, feature_names, no_top_words):
         topic_dict["Topic %d" % (topic_idx)] = [feature_names[i] for i in topic.argsort()[:-no_top_words - 1:-1]]
     return pd.DataFrame(topic_dict)
 
+st.write('Uncover latent topics within the GitHub repositories.')
+
 # Fit the LDA model
 lda = LatentDirichletAllocation(n_components=4, random_state=42)
 lda.fit(dtm)
@@ -348,7 +350,7 @@ st.pyplot(fig)
 
 
 st.title('Clusters')
-st.write('This is the main page of the app.')
+st.write('GitHub repositories categorized into distinct groups based on the similarity of their text content.')
 
 doc_topic_matrix = lda.transform(dtm)
 
