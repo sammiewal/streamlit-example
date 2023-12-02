@@ -364,10 +364,10 @@ for cluster_num in range(0,5):
     key_features = [feature_names[index]
                         for index in ordered_centroids[cluster_num, :topn_features]]
     repositories = repository_clusters[repository_clusters['kmeans_cluster'] == cluster_num]['Repository Name'].values.tolist()
-    print('CLUSTER #'+str(cluster_num+1))
-    print('Key Features:', key_features)
-    print('Popular Repositories:', repositories)
-    print('-'*80)
+    #print('CLUSTER #'+str(cluster_num+1))
+    #print('Key Features:', key_features)
+    #print('Popular Repositories:', repositories)
+    #print('-'*80)
 
 
 # Assuming 'km' is your trained KMeans model, and 'tv' is your TfidfVectorizer
@@ -401,11 +401,11 @@ for i in range(num_clusters):
     st.pyplot(plt)
 
 
-for i in range(num_clusters):
-    print(f'CLUSTER #{i+1}')
-    print('Key Features:', df_clusters.loc[i, 'Key Features'])
-    print('Popular Repositories:', df_clusters.loc[i, 'Repositories'])
-    print('-'*80)
+#for i in range(num_clusters):
+    #print(f'CLUSTER #{i+1}')
+    #print('Key Features:', df_clusters.loc[i, 'Key Features'])
+    #print('Popular Repositories:', df_clusters.loc[i, 'Repositories'])
+    #print('-'*80)
 
 
 # Assuming df_clusters is your existing DataFrame with cluster information
