@@ -331,8 +331,6 @@ plt.tight_layout()
 st.pyplot(fig)
 
 
-
-
 st.title('Clusters')
 st.write('GitHub repositories categorized into distinct groups based on the similarity of their text content.')
 
