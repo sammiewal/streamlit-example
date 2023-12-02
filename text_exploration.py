@@ -463,46 +463,37 @@ doc_sim_df = pd.DataFrame(doc_sim)                                              
 doc_sim_df.head()
 
 # saving all the unique movie titles to a list
-repository_list = combined_df['Repository Name'].values
-repository_list
+tv = TfidfVectorizer()
+tfidf_matrix = tv.fit_transform(norm_corpus)
 
-# extracted the index number
-repository_idx = np.where(repository_list == 'rails_admin')[0][0]
-repository_idx
+# Compute document similarity
+doc_sim = cosine_similarity(tfidf_matrix)
+doc_sim_df = pd.DataFrame(doc_sim)
 
-# extracting the similarity scores associated with the sample movie
-repository_similarities = doc_sim_df[repository_idx].values
-repository_similarities
-
-similar_repository_idxs = np.argsort(repository_similarities)[1:6]                                                 # save the movie index of the top 5 highest similarity scores
-similar_repository = repository_list[similar_repository_idxs]                                                         # pull out the movie names associated with those top 5 movie indices
-similar_repository
-
-def repository_recommender(repository_name, repository_list, doc_sim_df):
-    try:
-        repository_idx = np.where(repository_list == repository_name)[0][0]
-        repository_similarities = doc_sim_df.iloc[repository_idx].values
-        similar_repository_idxs = np.argsort(repository_similarities)[::-1][1:6]
-        similar_repositories = repository_list[similar_repository_idxs]
-        return similar_repositories
-    except IndexError:
-        return ["Repository not found."]
-# Streamlit interface
+# Create a Streamlit app
 st.title('Repository Recommender System')
 
-# Dropdown for repository recommender
-selected_repository = st.selectbox('Select a repository:', repository_list)
-if st.button('Recommend Repositories'):
-    recommendations = repository_recommender(selected_repository, repository_list, doc_sim_df)
-    st.write("Based on your interest in", selected_repository, ", I'd recommend checking out:")
-    for repo in recommendations:
-        st.write(repo)
-
-# Text input for query repository recommender
+# Input field for search query
 search_query = st.text_input('Enter a search query:')
+
+# Function to find similar repositories based on the search query
+def query_repository_recommender(search_query, repository_list, tfidf_matrix, tv):
+    # Transform the search query into its vector form
+    query_vector = tv.transform([search_query])
+
+    cosine_similarities = cosine_similarity(query_vector, tfidf_matrix)
+
+    similar_repository_idxs = cosine_similarities[0].argsort()[-5:][::-1]
+
+    similar_repositories = repository_list[similar_repository_idxs]
+
+    return similar_repositories
+
+# Button to trigger the search and display recommendations
 if st.button('Find Similar Repositories'):
     query_recommendations = query_repository_recommender(search_query, repository_list, tfidf_matrix, tv)
     st.write("Based on your search query, I'd recommend checking out:")
     for repo in query_recommendations:
         st.write(repo)
+
 
