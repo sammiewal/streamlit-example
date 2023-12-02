@@ -462,25 +462,6 @@ doc_sim = cosine_similarity(tfidf_matrix)    # compute document similarity by ex
 doc_sim_df = pd.DataFrame(doc_sim)                                                  # take doc_sim, convert to dataframe
 doc_sim_df.head()
 
-# saving all the unique movie titles to a list
-tv = TfidfVectorizer()
-tfidf_matrix = tv.fit_transform(norm_corpus)
-
-# Compute document similarity
-doc_sim = cosine_similarity(tfidf_matrix)
-doc_sim_df = pd.DataFrame(doc_sim)
-
-# Load your data (combined_df, norm_corpus, etc.) here
-# Double-check the variable names and data loading process
-
-# Calculate the TF-IDF matrix
-tv = TfidfVectorizer()
-tfidf_matrix = tv.fit_transform(norm_corpus)
-
-# Compute document similarity
-doc_sim = cosine_similarity(tfidf_matrix)
-doc_sim_df = pd.DataFrame(doc_sim)
-
 # Create a Streamlit app
 st.title('Repository Recommender System')
 
