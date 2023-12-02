@@ -449,7 +449,7 @@ exemplars = combined_df.loc[ap.cluster_centers_indices_]['Repository Name'].valu
 for cluster_num in filtered_clusters:
     repositories = repository_clusters[repository_clusters['affprop_cluster'] == cluster_num]['Repository Name'].values.tolist()
     exemplar_repository = combined_df[combined_df.index == ap.cluster_centers_indices_[cluster_num]]['Repository Name'].values[0]
-    print('CLUSTER #'+str(cluster_num))
-    print('Exemplar:', exemplar_repository)
-    print('Popular Repositories:', repositories)
-    print('-'*80)
+    #print('CLUSTER #'+str(cluster_num))
+    #print('Exemplar:', exemplar_repository)
+    #print('Popular Repositories:', repositories)
+    #print('-'*80)
