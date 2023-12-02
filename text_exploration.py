@@ -207,6 +207,7 @@ mask_image_gray = mask_image_color.convert('L')
 mask_array = np.array(mask_image_gray)
 transformed_mask_image = np.where(mask_array < 128, 0, 255)  # Adjust threshold as necessary
 
+st.title('Text Exploration')
 st.write('Analyze trending topics amongst the GitHub community.')
 
 # Create the word cloud object with additional parameters
@@ -336,7 +337,7 @@ plt.tight_layout()
 st.pyplot(fig)
 
 
-st.title('Clusters')
+st.title('Clustering')
 st.write('GitHub repositories categorized into distinct groups based on the similarity of their text content.')
 
 doc_topic_matrix = lda.transform(dtm)
