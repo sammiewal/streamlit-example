@@ -40,11 +40,6 @@ from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 
 
-from wordcloud import WordCloud
-import matplotlib.pyplot as plt
-
-from PIL import Image
-
 @st.cache_data
 def load_data(url):
     data = pd.read_csv(url)
@@ -110,9 +105,9 @@ combined_df = load_data(csv_url).copy()
 combined_df["Description"] = combined_df["Description"].apply(remove_special_characters)
 combined_df["Description"] = combined_df["Description"].apply(clean_text)
 
-combined_df = combined_df[['Repository Name', 'Repository URL', 'Description', 'Keyword', 'Stars']]
-combined_df['Description'] = combined_df['Keyword'].map(str) + ' ' + combined_df['Description'].map(str)
+stop_words = nltk.corpus.stopwords.words('english')
 
+def normalize_document(doc):
     doc = re.sub(r'[^a-zA-Z0-9\s]', '', doc, re.I|re.A)                                       # lower case and remove special characters\whitespaces
     doc = doc.lower()
     doc = doc.strip()
