@@ -221,24 +221,8 @@ ax.imshow(wordcloud, interpolation='bilinear')
 ax.axis("off")
 st.pyplot(fig)
 
-# Heatmap for correlations
-plt.figure(figsize=(10, 8))
-sns.heatmap(combined_df[['Total Words', 'Unique Words', 'Lexical Diversity', 'Avg Word Length', 'word_count', 'avg_word_length']].corr(), annot=True)
-plt.title('Correlation Heatmap')
-st.pyplot(plt)  # Using st.pyplot() to display the figure
-
-
-# Scatter plot of Stars vs. Forks
-plt.figure(figsize=(10, 6))
-plt.scatter(combined_df["Stars"], combined_df["word_count"], alpha=0.5)
-plt.xlabel("Stars")
-plt.ylabel("Word Count")
-plt.title("Stars vs. Word Count")
-st.pyplot(plt)  # Using st.pyplot() to display the figure
-
 
 st.title('Topic Modeling')
-st.write('This is the main page of the app.')
 
 preprocessed_data = combined_df['Description']
 tv = TfidfVectorizer(min_df=3, max_df=0.7, ngram_range=(2,2))
