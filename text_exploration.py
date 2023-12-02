@@ -470,6 +470,22 @@ tfidf_matrix = tv.fit_transform(norm_corpus)
 doc_sim = cosine_similarity(tfidf_matrix)
 doc_sim_df = pd.DataFrame(doc_sim)
 
+import streamlit as st
+import pandas as pd
+import numpy as np
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+
+# Load your data (combined_df, norm_corpus, etc.) here
+
+# Calculate the TF-IDF matrix
+tv = TfidfVectorizer()
+tfidf_matrix = tv.fit_transform(norm_corpus)
+
+# Compute document similarity
+doc_sim = cosine_similarity(tfidf_matrix)
+doc_sim_df = pd.DataFrame(doc_sim)
+
 # Create a Streamlit app
 st.title('Repository Recommender System')
 
@@ -478,22 +494,29 @@ search_query = st.text_input('Enter a search query:')
 
 # Function to find similar repositories based on the search query
 def query_repository_recommender(search_query, repository_list, tfidf_matrix, tv):
-    # Transform the search query into its vector form
-    query_vector = tv.transform([search_query])
+    try:
+        # Transform the search query into its vector form
+        query_vector = tv.transform([search_query])
 
-    cosine_similarities = cosine_similarity(query_vector, tfidf_matrix)
+        cosine_similarities = cosine_similarity(query_vector, tfidf_matrix)
 
-    similar_repository_idxs = cosine_similarities[0].argsort()[-5:][::-1]
+        similar_repository_idxs = cosine_similarities[0].argsort()[-5:][::-1]
 
-    similar_repositories = repository_list[similar_repository_idxs]
+        similar_repositories = repository_list[similar_repository_idxs]
 
-    return similar_repositories
+        return similar_repositories
+    except Exception as e:
+        return ["Error: " + str(e)]
 
 # Button to trigger the search and display recommendations
 if st.button('Find Similar Repositories'):
     query_recommendations = query_repository_recommender(search_query, repository_list, tfidf_matrix, tv)
-    st.write("Based on your search query, I'd recommend checking out:")
-    for repo in query_recommendations:
-        st.write(repo)
+    if "Error" in query_recommendations[0]:
+        st.write("An error occurred:", query_recommendations[0])
+    else:
+        st.write("Based on your search query, I'd recommend checking out:")
+        for repo in query_recommendations:
+            st.write(repo)
+
 
 
