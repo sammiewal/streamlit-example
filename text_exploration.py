@@ -470,13 +470,8 @@ tfidf_matrix = tv.fit_transform(norm_corpus)
 doc_sim = cosine_similarity(tfidf_matrix)
 doc_sim_df = pd.DataFrame(doc_sim)
 
-import streamlit as st
-import pandas as pd
-import numpy as np
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
-
 # Load your data (combined_df, norm_corpus, etc.) here
+# Double-check the variable names and data loading process
 
 # Calculate the TF-IDF matrix
 tv = TfidfVectorizer()
@@ -511,12 +506,16 @@ def query_repository_recommender(search_query, repository_list, tfidf_matrix, tv
 # Button to trigger the search and display recommendations
 if st.button('Find Similar Repositories'):
     query_recommendations = query_repository_recommender(search_query, repository_list, tfidf_matrix, tv)
+    
+    # Debugging print statements to check if variables are correct
+    print("Search Query:", search_query)
+    print("Recommendations:", query_recommendations)
+    
     if "Error" in query_recommendations[0]:
         st.write("An error occurred:", query_recommendations[0])
     else:
         st.write("Based on your search query, I'd recommend checking out:")
         for repo in query_recommendations:
             st.write(repo)
-
 
 
