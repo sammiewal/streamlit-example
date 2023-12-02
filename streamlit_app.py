@@ -132,7 +132,6 @@ doc_sim_df.head()
 
 # saving all the unique movie titles to a list
 repository_list = combined_df['Repository Name'].values
-repository_list
 
 # Create a Streamlit app
 st.title('Repository Recommender System')
