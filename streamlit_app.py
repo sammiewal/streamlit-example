@@ -415,11 +415,11 @@ doc_sim_df.head()
 # saving all the unique movie titles to a list
 repository_list = combined_df['Repository Name'].values
 
-# Create a Streamlit app
-st.title('Repository Recommender System')
+# Create a Streamlit sidebar for the Repository Recommender System
+st.sidebar.title('Repository Recommender System')
 
-# Input field for search query
-search_query = st.text_input('Enter a search query:')
+# Input field for search query in the sidebar
+search_query = st.sidebar.text_input('Enter a search query:')
 
 # Function to find similar repositories based on the search query
 def query_repository_recommender(search_query, repository_list, tfidf_matrix, tv, combined_df):
@@ -437,18 +437,17 @@ def query_repository_recommender(search_query, repository_list, tfidf_matrix, tv
     except Exception as e:
         return ["Error: " + str(e)]
 
-# Button to trigger the search and display recommendations
-if st.button('Find Similar Repositories'):
+# Button to trigger the search and display recommendations in the sidebar
+if st.sidebar.button('Find Similar Repositories'):
     query_recommendations = query_repository_recommender(search_query, repository_list, tfidf_matrix, tv, combined_df)
     
     if "Error" in query_recommendations[0]:
-        st.write("An error occurred:", query_recommendations[0])
+        st.sidebar.write("An error occurred:", query_recommendations[0])
     else:
-        st.write("Based on your search query, I'd recommend checking out:")
+        st.sidebar.write("Based on your search query, I'd recommend checking out:")
         for repo in query_recommendations:
             # Retrieve the corresponding repository URL from the DataFrame
             repo_url = combined_df.loc[combined_df['Repository Name'] == repo, 'Repository URL'].values[0]
             
-            # Display the repository name as a clickable hyperlink
-            st.markdown(f"[{repo}]({repo_url})")
-
+            # Display the repository name as a clickable hyperlink in the sidebar
+            st.sidebar.markdown(f"[{repo}]({repo_url})")
