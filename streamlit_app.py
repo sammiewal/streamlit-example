@@ -321,25 +321,6 @@ display_topics(lda, feature_names, no_top_words, new_topic_names)
 # Prepare the topics data for visualization
 topics_df = prepare_topics(lda, feature_names, no_top_words, new_topic_names)
 
-
-# Create the plots with new topic names
-fig, axes = plt.subplots(2, 2, figsize=(15, 10))
-axes = axes.flatten()
-for i, ax in enumerate(axes):
-    topic = lda.components_[i]
-    top_word_indices = topic.argsort()[-no_top_words:]
-    ax.barh(range(no_top_words), topic[top_word_indices])
-    ax.set_yticks(range(no_top_words))
-    ax.set_yticklabels([feature_names[j] for j in top_word_indices])
-    ax.set_title(new_topic_names.get(i, f'Topic {i}'))
-
-plt.tight_layout()
-st.pyplot(fig)
-
-
-st.title('Clustering')
-st.write('GitHub repositories categorized into distinct groups based on the similarity of their text content.')
-
 doc_topic_matrix = lda.transform(dtm)
 
 df_doc_topic = pd.DataFrame(doc_topic_matrix, columns=[f'Topic {i}' for i in range(lda.n_components)])
@@ -413,30 +394,6 @@ df_clusters = pd.DataFrame(clusters_info, columns=['Cluster', 'Key Features', 'R
 # Number of clusters
 num_clusters = df_clusters.shape[0]
 
-
-# Define new cluster names
-new_cluster_names = {
-    0: "Open-Source Web Development",
-    1: "API Development & Integration",
-    2: "Curated Development Resources",
-    3: "Open-Source Software and Security",
-    4: "Machine Learning & Deep Learning Technologies",
-    # Add more if there are more clusters
-}
-
-# Plotting
-for i in range(num_clusters):
-    plt.figure(figsize=(10, 6))
-    key_features = df_clusters.loc[i, 'Key Features']
-    y_pos = np.arange(len(key_features))
-    plt.barh(y_pos, range(len(key_features)), align='center')
-    plt.yticks(y_pos, key_features)
-    plt.gca().invert_yaxis()  # To display the highest values at the top
-    plt.xlabel('Feature Importance')
-    # Use the new cluster names for the plot title
-    plt.title(new_cluster_names.get(i, f'Cluster {i+1}'))
-    st.pyplot(plt)
-
 # Update clusters_summary to use new cluster names for the summary DataFrame
 clusters_summary = [
     {
@@ -449,10 +406,6 @@ clusters_summary = [
 
 # Convert the list of dictionaries to a DataFrame
 summary_df = pd.DataFrame(clusters_summary)
-
-
-# Display the summary DataFrame
-st.dataframe(summary_df)
 
 cosine_sim_features = cosine_similarity(tv_matrix)# get cosine similarity features from tv_matrix
 
@@ -482,17 +435,6 @@ for cluster_num in filtered_clusters:
     #print('Popular Repositories:', repositories)
     #print('-'*80)
 
-def normalize_document(doc):
-    doc = re.sub(r'[^a-zA-Z0-9\s]', '', doc, re.I|re.A)                                       # lower case and remove special characters\whitespaces
-    doc = doc.lower()
-    doc = doc.strip()
-    tokens = nltk.word_tokenize(doc)                                                          # tokenize document
-    filtered_tokens = [token for token in tokens if token not in stop_words]                  # filter stopwords out of document
-    doc = ' '.join(filtered_tokens)                                                           # re-create document from filtered tokens
-    return doc
-
-normalize_corpus = np.vectorize(normalize_document)
-
 norm_corpus = normalize_corpus(list(combined_df['Description']))
 
 tv = TfidfVectorizer(use_idf=True, min_df=3, max_df=0.8, ngram_range=(1,2), sublinear_tf=True)
@@ -508,55 +450,7 @@ doc_sim_df.head()
 # saving all the unique movie titles to a list
 repository_list = combined_df['Repository Name'].values
 
-# Create a Streamlit app
-st.title('Repository Recommender System')
-
-# Input field for search query
-search_query = st.text_input('Enter a search query:')
-
-# Function to find similar repositories based on the search query
-def query_repository_recommender(search_query, repository_list, tfidf_matrix, tv, combined_df):
-    try:
-        # Transform the search query into its vector form
-        query_vector = tv.transform([search_query])
-
-        cosine_similarities = cosine_similarity(query_vector, tfidf_matrix)
-
-        similar_repository_idxs = cosine_similarities[0].argsort()[-5:][::-1]
-
-        similar_repositories = repository_list[similar_repository_idxs]
-
-        return similar_repositories
-    except Exception as e:
-        return ["Error: " + str(e)]
-
-# Button to trigger the search and display recommendations
-if st.button('Find Similar Repositories'):
-    query_recommendations = query_repository_recommender(search_query, repository_list, tfidf_matrix, tv, combined_df)
-    
-    if "Error" in query_recommendations[0]:
-        st.write("An error occurred:", query_recommendations[0])
-    else:
-        st.write("Based on your search query, I'd recommend checking out:")
-        for repo in query_recommendations:
-            # Retrieve the corresponding repository URL from the DataFrame
-            repo_url = combined_df.loc[combined_df['Repository Name'] == repo, 'Repository URL'].values[0]
-            
-            # Display the repository name as a clickable hyperlink
-            st.markdown(f"[{repo}]({repo_url})")
-
 stop_words = nltk.corpus.stopwords.words('english')
-
-def normalize_document(doc):
-    doc = re.sub(r'[^a-zA-Z0-9\s]', '', doc, re.I|re.A)                                       # lower case and remove special characters\whitespaces
-    doc = doc.lower()
-    doc = doc.strip()
-    tokens = nltk.word_tokenize(doc)                                                          # tokenize document
-    filtered_tokens = [token for token in tokens if token not in stop_words]                  # filter stopwords out of document
-    doc = ' '.join(filtered_tokens)                                                           # re-create document from filtered tokens
-    return doc
-
-normalize_corpus = np.vectorize(normalize_document)
 
 norm_corpus = normalize_corpus(list(combined_df['Description']))
 
