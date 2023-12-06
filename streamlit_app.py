@@ -290,8 +290,6 @@ feature_names = vocabulary  # Replace 'vocabulary' with your actual vocabulary v
 # Prepare the topics data for visualization
 topics_df = prepare_topics(lda, feature_names, no_top_words)
 
-st.dataframe(topics_df)
-
 # New topic names
 new_topic_names = {
     0: "Open-Source Web Development",
