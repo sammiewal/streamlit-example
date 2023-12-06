@@ -360,9 +360,18 @@ doc_sim = cosine_similarity(tfidf_matrix)    # compute document similarity by ex
 doc_sim_df = pd.DataFrame(doc_sim)                                                  # take doc_sim, convert to dataframe
 doc_sim_df.head()
 
-# Step 1: Ensure your DataFrame has a 'Topics' column
-# If not, create this column in your DataFrame. Here's a placeholder line:
-# combined_df['Topics'] = ['topic1', 'topic2', 'topic3'] # Replace this with actual topic extraction
+# Step 1: Assign each document to its most dominant topic
+dominant_topic = np.argmax(doc_topic_matrix, axis=1)  # This gives the index of the most dominant topic for each document
+
+# Step 2: Create a mapping function
+def map_topic(index):
+    return new_topic_names.get(index, f"Topic {index}")
+
+# Step 3: Map each document to its topic name and create the 'Topics' column
+combined_df['Topics'] = [map_topic(idx) for idx in dominant_topic]
+
+# Now you can use this 'Topics' column in your Streamlit app
+
 
 # Step 2: Create a multiselect sidebar for topics
 selected_topics = st.sidebar.multiselect(
