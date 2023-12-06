@@ -227,7 +227,6 @@ ax.imshow(wordcloud, interpolation='bilinear')
 ax.axis("off")
 st.pyplot(fig)
 
-
 st.title('Topic Modeling')
 
 preprocessed_data = combined_df['Description']
@@ -360,6 +359,32 @@ tfidf_matrix = tv.fit_transform(norm_corpus)                                    
 doc_sim = cosine_similarity(tfidf_matrix)    # compute document similarity by examining the cosine similairty b/w documents in matrix
 doc_sim_df = pd.DataFrame(doc_sim)                                                  # take doc_sim, convert to dataframe
 doc_sim_df.head()
+
+# Step 1: Ensure your DataFrame has a 'Topics' column
+# If not, create this column in your DataFrame. Here's a placeholder line:
+# combined_df['Topics'] = ['topic1', 'topic2', 'topic3'] # Replace this with actual topic extraction
+
+# Step 2: Create a multiselect sidebar for topics
+selected_topics = st.sidebar.multiselect(
+    'Select Topics', 
+    options=combined_df['Topics'].unique(),  # List of unique topics
+    default=combined_df['Topics'].unique()[0]  # Default selection
+)
+
+# Step 3: Filter the DataFrame based on the selected topics
+filtered_df = combined_df[combined_df['Topics'].isin(selected_topics)]
+
+# Step 4: Display the filtered repositories
+for index, row in filtered_df.iterrows():
+    st.write(f"Repository Name: {row['Repository Name']}")
+    st.write(f"URL: {row['Repository URL']}")
+    st.write(f"Description: {row['Description']}")
+    st.write(f"Stars: {row['Stars']}")
+    st.write(f"Topics: {row['Topics']}")
+    st.write("-----")
+
+
+
 
 # saving all the unique movie titles to a list
 repository_list = combined_df['Repository Name'].values
