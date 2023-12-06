@@ -322,7 +322,6 @@ topics_df = prepare_topics(lda, feature_names, no_top_words, new_topic_names)
 doc_topic_matrix = lda.transform(dtm)
 
 df_doc_topic = pd.DataFrame(doc_topic_matrix, columns=[f'Topic {i}' for i in range(lda.n_components)])
-df_doc_topic
 
 stop_words = nltk.corpus.stopwords.words('english')
 
